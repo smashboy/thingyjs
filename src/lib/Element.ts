@@ -88,11 +88,11 @@ export class ElementNode<
     return this;
   }
 
-  appendChildren(children: InternalChildren) {
-    for (const child of children) {
-      this._children.push(child);
-    }
-  }
+  // appendChildren(children: ElementNodePropery<Children>) {
+  //   for (const child of children) {
+  //     this._children.push(child);
+  //   }
+  // }
 
   private initStateListener() {
     if (this.state) {
