@@ -1,10 +1,12 @@
+import { updateDOM } from "./renderer";
+
 export type StateValue = Record<string | symbol, any>;
 
 export const IS_STATE_KEY = Symbol("_isState");
 export const STATE_BIND_KEY = Symbol("_bindState");
 
 export function state<T extends StateValue>(value: T) {
-  const nodes = new Map<string, () => void>();
+  const nodes = new Map<number, () => void>();
 
   Object.defineProperty(value, IS_STATE_KEY, {
     configurable: false,
@@ -17,7 +19,7 @@ export function state<T extends StateValue>(value: T) {
     configurable: false,
     writable: false,
     enumerable: false,
-    value: (nodeId: string, onUpdate: () => void) =>
+    value: (nodeId: number, onUpdate: () => void) =>
       nodes.set(nodeId, onUpdate),
   });
 
@@ -32,6 +34,8 @@ export function state<T extends StateValue>(value: T) {
       for (const onUpdate of nodes.values()) {
         onUpdate();
       }
+
+      updateDOM(new Set(nodes.keys()));
 
       return true;
     },

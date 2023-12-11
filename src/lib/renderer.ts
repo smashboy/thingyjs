@@ -2,8 +2,8 @@ import { ElementNode, ElementNodeData } from "./Element";
 
 const HTML_ELEMENT_NODE_ID_ATTRIBUTE_KEY = "data-thingyjsid";
 
-const nodesIdsList = new Set<string>();
-const newNodesIdsList = new Set<string>();
+const nodesIdsList = new Set<number>();
+const newNodesIdsList = new Set<number>();
 
 let appRootHTML: HTMLElement;
 let appRoot: ElementNode<any, any>;
@@ -14,13 +14,13 @@ export function render(root: HTMLElement, app: ElementNode<any, any>) {
   }
 
   appRootHTML = root;
-  appRoot = appRoot;
+  appRoot = app;
 
   root.appendChild(createHTMLElement(app));
 }
 
 function createHTMLElement(node: ElementNode<any, any>) {
-  const data = node._init(updateDOM);
+  const data = node._getNode();
 
   const element = document.createElement(data.tag);
 
@@ -35,11 +35,27 @@ function createHTMLElement(node: ElementNode<any, any>) {
   return element;
 }
 
-function updateDOM() {
+export function updateDOM(nodeIds2Update: Set<number>) {
   newNodesIdsList.clear();
+
+  const nodes2Update = getElementNodesMapFromSet(nodeIds2Update, appRoot);
+
+  for (const nodeId of nodeIds2Update) {
+    const element = getHTMLElementByNodeId(nodeId);
+    const node = nodes2Update.get(nodeId);
+
+    if (!node || !element) continue;
+
+    updateHTMLElement(element as HTMLElement, node);
+  }
 }
 
-function updateHTMLElement() {}
+function updateHTMLElement(
+  prevElement: HTMLElement,
+  node: ElementNode<any, any>
+) {
+  prevElement.replaceWith(createHTMLElement(node));
+}
 
 function removeHTMLElement() {}
 
@@ -95,10 +111,43 @@ function clearListeners(element: HTMLElement, node: ElementNodeData) {
 }
 
 function createNodeIdAttribute(element: HTMLElement, node: ElementNodeData) {
-  nodesIdsList.add(node.nodeAttributeId);
+  nodesIdsList.add(node.nodeId);
 
   element.setAttribute(
     HTML_ELEMENT_NODE_ID_ATTRIBUTE_KEY,
-    node.nodeAttributeId
+    node.nodeId.toString()
+  );
+}
+
+function getElementNodesMapFromSet(
+  nodeIds: Set<number>,
+  node: ElementNode<any, any>
+) {
+  const nodes = new Map<number, ElementNode<any, any>>();
+
+  const data = node._getNode();
+
+  if (nodeIds.has(data.nodeId)) {
+    nodes.set(data.nodeId, node);
+  }
+
+  for (let child of data.children) {
+    child = typeof child === "function" ? child() : child;
+
+    if (child instanceof ElementNode) {
+      const childNodes = getElementNodesMapFromSet(nodeIds, child);
+
+      for (const [id, node] of childNodes.entries()) {
+        nodes.set(id, node);
+      }
+    }
+  }
+
+  return nodes;
+}
+
+function getHTMLElementByNodeId(nodeId: number) {
+  return appRootHTML.querySelector(
+    `[${HTML_ELEMENT_NODE_ID_ATTRIBUTE_KEY}="${nodeId}"]`
   );
 }

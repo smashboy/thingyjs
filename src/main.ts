@@ -6,20 +6,25 @@ import "./style.css";
 const myState = state({ counter: 0 });
 
 const app = Element("div")
-  .append(() =>
-    Element("h1", myState).append(() => `Count: ${myState.counter}`)
+  .appendChild(
+    Element("h1", myState).appendChild(() => `Count: ${myState.counter}`)
   )
-  .append(
+  .appendChild(
+    Element("h1", myState).appendChild(
+      () => `Another count: ${myState.counter * 2}`
+    )
+  )
+  .appendChild(
     Element("div")
-      .append(
+      .appendChild(
         Element("button")
-          .append(() => "+")
+          .appendChild("+")
           .listen("click", () => myState.counter++)
           .styles({ backgroundColor: "green" })
       )
-      .append(
+      .appendChild(
         Element("button")
-          .append(() => "-")
+          .appendChild("-")
           .listen("click", () => {
             if (myState.counter > 0) {
               myState.counter--;

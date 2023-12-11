@@ -33,7 +33,6 @@ export class ElementNode<
   S extends StateValue
 > {
   private readonly nodeId: number;
-  private renderCount: number;
 
   private readonly tag: N;
   private readonly _children: InternalChildren = [];
@@ -43,7 +42,6 @@ export class ElementNode<
   private readonly attributes: ElementNodeAttributes = {};
 
   private readonly state: S | void = void 0;
-  private onStateUpdateExtenralCallback: (() => void) | void = void 0;
 
   constructor(tag: N, state?: S) {
     if (state && !state[IS_STATE_KEY]) {
@@ -54,7 +52,6 @@ export class ElementNode<
     this.state = state;
 
     this.nodeId = globalNodeId;
-    this.renderCount = 0;
 
     globalNodeId++;
 
@@ -86,9 +83,15 @@ export class ElementNode<
     return this;
   }
 
-  append(child: InternalChild) {
+  appendChild(child: InternalChild) {
     this._children.push(child);
     return this;
+  }
+
+  appendChildren(children: InternalChildren) {
+    for (const child of children) {
+      this._children.push(child);
+    }
   }
 
   private initStateListener() {
@@ -97,31 +100,14 @@ export class ElementNode<
     }
   }
 
-  private onStateUpdate() {
-    if (this.onStateUpdateExtenralCallback) {
-      this.renderCount++;
-      this.onStateUpdateExtenralCallback();
-    }
-  }
-
-  _getNodeAttributeId() {
-    return `${this.nodeId}:${this.renderCount}`;
-  }
-
-  _init(onStateUpdateExtenralCallback: () => void) {
-    this.onStateUpdateExtenralCallback = onStateUpdateExtenralCallback;
-
-    return this._getNode();
-  }
+  private onStateUpdate() {}
 
   _getNode() {
-    const { tag, nodeId, renderCount, style, attributes, listeners } = this;
+    const { tag, nodeId, style, attributes, listeners } = this;
 
     return {
       tag,
       nodeId,
-      renderCount,
-      nodeAttributeId: this._getNodeAttributeId(),
       style,
       attributes,
       listeners,
