@@ -3,6 +3,7 @@ import { ElementNode, ElementNodeData } from "./Element";
 const HTML_ELEMENT_NODE_ID_ATTRIBUTE_KEY = "data-thingyjsid";
 
 const nodesIdsList = new Set<number>();
+// FORGOT ABOUT THIS!!!
 const newNodesIdsList = new Set<number>();
 
 let appRootHTML: HTMLElement;

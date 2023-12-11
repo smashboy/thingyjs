@@ -6,25 +6,21 @@ import "./style.css";
 const myState = state({ counter: 0 });
 
 const app = Element("div")
-  .appendChild(
-    Element("h1", myState).appendChild(() => `Count: ${myState.counter}`)
+  .child(Element("h1", myState).child(() => `Count: ${myState.counter}`))
+  .child(
+    Element("h1", myState).child(() => `Another count: ${myState.counter * 2}`)
   )
-  .appendChild(
-    Element("h1", myState).appendChild(
-      () => `Another count: ${myState.counter * 2}`
-    )
-  )
-  .appendChild(
+  .child(
     Element("div")
-      .appendChild(
+      .child(
         Element("button")
-          .appendChild("+")
+          .child("+")
           .listen("click", () => myState.counter++)
           .styles({ backgroundColor: "green" })
       )
-      .appendChild(
+      .child(
         Element("button")
-          .appendChild("-")
+          .child("-")
           .listen("click", () => {
             if (myState.counter > 0) {
               myState.counter--;
@@ -32,8 +28,7 @@ const app = Element("div")
           })
           .styles({ backgroundColor: "red" })
       )
-  );
-
-// TODO: rework .appendChild(E()) to .children((append) => ...)
+  )
+  .child(Element("ul", myState));
 
 render(document.getElementById("app")!, app);

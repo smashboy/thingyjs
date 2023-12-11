@@ -83,16 +83,10 @@ export class ElementNode<
     return this;
   }
 
-  appendChild(child: InternalChild) {
+  child(child: InternalChild) {
     this._children.push(child);
     return this;
   }
-
-  // appendChildren(children: ElementNodePropery<Children>) {
-  //   for (const child of children) {
-  //     this._children.push(child);
-  //   }
-  // }
 
   private initStateListener() {
     if (this.state) {
@@ -100,6 +94,7 @@ export class ElementNode<
     }
   }
 
+  // TODO: remove?
   private onStateUpdate() {}
 
   _getNode() {
