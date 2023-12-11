@@ -34,4 +34,6 @@ const app = Element("div")
       )
   );
 
+// TODO: rework .appendChild(E()) to .children((append) => ...)
+
 render(document.getElementById("app")!, app);
