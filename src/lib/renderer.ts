@@ -42,7 +42,6 @@ export class Renderer {
     const newElement = this.createHTMLElement();
 
     this.element = this.patchTree(this.element(), newElement());
-    // console.log(this.element());
   }
 
   private patchTree(prev: Element | ChildNode, updated: Element | ChildNode) {
@@ -62,16 +61,17 @@ export class Renderer {
     }
 
     if (prev.childNodes.length > updated.childNodes.length) {
-      for (
-        let index = updated.childNodes.length;
-        index < prev.childNodes.length;
-        index++
-      ) {
+      const start = prev.childNodes.length;
+      const end = updated.childNodes.length;
+
+      for (let index = start; index > end - 1; index--) {
         prev.childNodes[index]?.remove();
       }
     }
 
-    for (let index = 0; index < updated.childNodes.length; index++) {
+    const end = updated.childNodes.length;
+
+    for (let index = 0; index < end; index++) {
       const newChild = updated.childNodes[index];
       const prevChild = prev.childNodes[index];
 
@@ -80,7 +80,7 @@ export class Renderer {
         continue;
       }
 
-      prev.appendChild(newChild);
+      prev.appendChild(newChild.cloneNode(true));
     }
 
     return () => prev;
@@ -129,7 +129,6 @@ export class Renderer {
 
     if (typeof this.nodeData.style === "function") {
       styles = this.nodeData.style();
-      // console.log("ACTUAL STYLES", styles?.backgroundColor);
     }
 
     for (const key in styles) {
@@ -166,6 +165,7 @@ export class Renderer {
 
       for (let index = 0; index < array.length; index++) {
         const item = array[index];
+
         this.appendChild(element, callback(item, index));
       }
 

@@ -15,7 +15,7 @@ const app = Element("div")
       .child(
         Element("button")
           .child("+")
-          .listen("click", () => myState.counter++)
+          .listen("click", () => (myState.counter += 1000))
           .styles({ backgroundColor: "green" })
       )
       .child(
@@ -23,7 +23,7 @@ const app = Element("div")
           .child("-")
           .listen("click", () => {
             if (myState.counter > 0) {
-              myState.counter--;
+              myState.counter -= 1000;
             }
           })
           .styles({ backgroundColor: "red" })
@@ -34,7 +34,10 @@ const app = Element("div")
       .styles(() => ({
         width: "100px",
         height: "100px",
-        backgroundColor: myState.counter % 2 === 0 ? "green" : "red",
+        backgroundColor:
+          Number(myState.counter.toString().split("")[0]) % 2 === 0
+            ? "green"
+            : "red",
         margin: "10px",
         display: "flex",
         justifyContent: "center",
