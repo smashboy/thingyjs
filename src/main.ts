@@ -32,12 +32,18 @@ const app = Element("div")
   .child(
     Element("ul", myState).forEachChild(
       () => Array.from({ length: myState.counter }).fill("Item") as string[],
-      (item, index) => {
-        if (index % 2 === 0) {
-          return Element("li").child(`${item}: ${index + 1}`);
-        }
-      }
+      (item, index) => Element("li").child(`${item}: ${index + 1}`)
     )
   );
+// .child(
+//   Element("ul", myState).forEachChild(
+//     () => Array.from({ length: myState.counter }).fill("Item") as string[],
+//     (item, index) => {
+//       if (index % 2 === 0) {
+//         return Element("li").child(`${item}: ${index + 1}`);
+//       }
+//     }
+//   )
+// );
 
 render(document.getElementById("app")!, app);
