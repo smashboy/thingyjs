@@ -53,12 +53,19 @@ export class Renderer {
     const newCloneWithoutChildren = updated.cloneNode(false);
 
     if (!prevCloneWithoutChildren.isEqualNode(newCloneWithoutChildren)) {
+      // const prevCloneWithChildren = prev.cloneNode(true);
       prev.replaceWith(newCloneWithoutChildren);
+
+      // console.log({ prev, updated }, prevCloneWithChildren.childNodes);
+
+      // for (const node of prevCloneWithChildren.childNodes) {
+      //   prev.appendChild(node);
+      // }
     }
 
     if (prev.childNodes.length > updated.childNodes.length) {
       for (
-        let index = updated.childNodes.length - 1;
+        let index = updated.childNodes.length;
         index < prev.childNodes.length;
         index++
       ) {
@@ -117,9 +124,14 @@ export class Renderer {
   }
 
   private appendStyles(element: HTMLElement) {
-    for (const key in this.nodeData.style) {
-      if (Object.prototype.hasOwnProperty.call(this.nodeData.style, key)) {
-        const property = this.nodeData.style[key];
+    const styles =
+      typeof this.nodeData.style === "function"
+        ? this.nodeData.style()
+        : this.nodeData.style;
+
+    for (const key in styles) {
+      if (Object.prototype.hasOwnProperty.call(styles, key)) {
+        const property = styles[key];
         element.style[key] = property!;
       }
     }

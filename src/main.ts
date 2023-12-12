@@ -30,20 +30,32 @@ const app = Element("div")
       )
   )
   .child(
+    Element("span", myState)
+      .styles(() => ({
+        width: "100px",
+        height: "100px",
+        backgroundColor: myState.counter % 2 === 0 ? "green" : "red",
+        margin: "10px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }))
+      .child(() => `${myState.counter}`)
+  )
+  // .child(
+  //   Element("ul", myState).forEachChild(
+  //     () => Array.from({ length: myState.counter }).fill("Item") as string[],
+  //     (item, index) => Element("li").child(`${item}: ${index + 1}`)
+  //   )
+  // );
+  .child(
     Element("ul", myState).forEachChild(
       () => Array.from({ length: myState.counter }).fill("Item") as string[],
-      (item, index) => Element("li").child(`${item}: ${index + 1}`)
+      (item, index) =>
+        Element("li")
+          .styles({ backgroundColor: index % 2 === 0 ? "green" : "red" })
+          .child(`${item}: ${index + 1}`)
     )
   );
-// .child(
-//   Element("ul", myState).forEachChild(
-//     () => Array.from({ length: myState.counter }).fill("Item") as string[],
-//     (item, index) => {
-//       if (index % 2 === 0) {
-//         return Element("li").child(`${item}: ${index + 1}`);
-//       }
-//     }
-//   )
-// );
 
 render(document.getElementById("app")!, app);

@@ -26,7 +26,9 @@ export type ElementListener<K extends keyof HTMLElementEventMap> = {
   options?: boolean | AddEventListenerOptions;
 };
 
-export type ElementNodeStyles = Partial<CSSStyleDeclaration>;
+export type ElementNodeStyles = ElementNodePropery<
+  Partial<CSSStyleDeclaration>
+>;
 export type ElementNodeListeners = Record<string, ElementListener<any>>;
 
 export type ElementNodeAttributes = Record<string, string>;
@@ -46,7 +48,7 @@ export class ElementNode<
   private readonly tag: N;
   private readonly _children: InternalChildren = [];
 
-  private readonly style: ElementNodeStyles = {};
+  private style: ElementNodeStyles = {};
   private readonly listeners: ElementNodeListeners = {};
   private readonly attributes: ElementNodeAttributes = {};
 
@@ -82,6 +84,13 @@ export class ElementNode<
   }
 
   styles(styles: ElementNodeStyles) {
+    if (typeof styles === "function") {
+      this.style = styles;
+      return this;
+    }
+
+    this.style = {};
+
     for (const key in styles) {
       if (Object.prototype.hasOwnProperty.call(styles, key)) {
         const property = styles[key];
