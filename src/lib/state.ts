@@ -1,5 +1,3 @@
-import { updateDOM } from "./renderer";
-
 export type StateValue = Record<string | symbol, any>;
 
 export const IS_STATE_KEY = Symbol("_isState");
@@ -34,8 +32,6 @@ export function state<T extends StateValue>(value: T) {
       for (const onUpdate of nodes.values()) {
         onUpdate();
       }
-
-      updateDOM(new Set(nodes.keys()));
 
       return true;
     },

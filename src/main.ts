@@ -1,5 +1,5 @@
 import { Element } from "./lib/Element";
-import { render } from "./lib/renderer";
+import render from "./lib/renderer";
 import { state } from "./lib/state";
 import "./style.css";
 
@@ -29,6 +29,11 @@ const app = Element("div")
           .styles({ backgroundColor: "red" })
       )
   )
-  .child(Element("ul", myState));
+  .child(
+    Element("ul", myState).forEachChild(
+      Array.from({ length: 10000 }).fill("Item") as string[],
+      (item, index) => Element("li").child(`${item}: ${index + 1}`)
+    )
+  );
 
 render(document.getElementById("app")!, app);

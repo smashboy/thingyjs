@@ -1,154 +1,156 @@
-import { ElementNode, ElementNodeData } from "./Element";
+import {
+  Child,
+  ChildLoop,
+  Children,
+  ElementNode,
+  IS_CHILD_LOOP_KEY,
+  InternalChild,
+} from "./Element";
+import { STATE_BIND_KEY, StateValue } from "./state";
 
-const HTML_ELEMENT_NODE_ID_ATTRIBUTE_KEY = "data-thingyjsid";
+export class Renderer {
+  private element!: HTMLElement;
+  private nodeRef: ElementNode<any, any>;
+  private readonly stateRef: StateValue | void = void 0;
 
-const nodesIdsList = new Set<number>();
-// FORGOT ABOUT THIS!!!
-const newNodesIdsList = new Set<number>();
+  private readonly prevReactiveNodes: Children = [];
+  private readonly newReactiveNodes: Children = [];
 
-let appRootHTML: HTMLElement;
-let appRoot: ElementNode<any, any>;
+  constructor(node: ElementNode<any, any>, state?: StateValue) {
+    this.nodeRef = node;
+    this.stateRef = state;
 
-export function render(root: HTMLElement, app: ElementNode<any, any>) {
-  if (!root) {
-    throw new Error("Please provide a valid entry for your application");
+    this.onStateUpdate = this.onStateUpdate.bind(this);
+
+    this.bindState();
   }
 
-  appRootHTML = root;
-  appRoot = app;
-
-  root.appendChild(createHTMLElement(app));
-}
-
-function createHTMLElement(node: ElementNode<any, any>) {
-  const data = node._getNode();
-
-  const element = document.createElement(data.tag);
-
-  appendAttributes(element, data);
-  appendStyles(element, data);
-
-  createNodeIdAttribute(element, data);
-
-  initListeners(element, data);
-  appendChildren(element, data);
-
-  return element;
-}
-
-export function updateDOM(nodeIds2Update: Set<number>) {
-  newNodesIdsList.clear();
-
-  const nodes2Update = getElementNodesMapFromSet(nodeIds2Update, appRoot);
-
-  for (const nodeId of nodeIds2Update) {
-    const element = getHTMLElementByNodeId(nodeId);
-    const node = nodes2Update.get(nodeId);
-
-    if (!node || !element) continue;
-
-    updateHTMLElement(element as HTMLElement, node);
-  }
-}
-
-function updateHTMLElement(
-  prevElement: HTMLElement,
-  node: ElementNode<any, any>
-) {
-  prevElement.replaceWith(createHTMLElement(node));
-}
-
-function removeHTMLElement() {}
-
-function appendChildren(parent: HTMLElement, node: ElementNodeData) {
-  for (let child of node.children) {
-    child = typeof child === "function" ? child() : child;
-
-    if (child === null || child === undefined) continue;
-
-    if (child instanceof ElementNode) {
-      parent.appendChild(createHTMLElement(child));
-      continue;
-    }
-
-    parent.appendChild(document.createTextNode(`${child}`));
-  }
-}
-
-function initListeners(element: HTMLElement, node: ElementNodeData) {
-  for (const key in node.listeners) {
-    if (Object.prototype.hasOwnProperty.call(node.listeners, key)) {
-      const listener = node.listeners[key];
-      element.addEventListener(key, listener.callback, listener.options);
+  private bindState() {
+    if (this.stateRef) {
+      this.stateRef[STATE_BIND_KEY](this.nodeData.nodeId, this.onStateUpdate);
     }
   }
-}
 
-function appendStyles(element: HTMLElement, node: ElementNodeData) {
-  for (const key in node.style) {
-    if (Object.prototype.hasOwnProperty.call(node.style, key)) {
-      const property = node.style[key];
-      element.style[key] = property!;
-    }
-  }
-}
-
-function appendAttributes(element: HTMLElement, node: ElementNodeData) {
-  for (const key in node.attributes) {
-    if (Object.prototype.hasOwnProperty.call(node.attributes, key)) {
-      const value = node.attributes[key];
-      element.setAttribute(key, value!);
-    }
-  }
-}
-
-function clearListeners(element: HTMLElement, node: ElementNodeData) {
-  for (const key in node.listeners) {
-    if (Object.prototype.hasOwnProperty.call(node.listeners, key)) {
-      const listener = node.listeners[key];
-      element.removeEventListener(key, listener.callback, listener.options);
-    }
-  }
-}
-
-function createNodeIdAttribute(element: HTMLElement, node: ElementNodeData) {
-  nodesIdsList.add(node.nodeId);
-
-  element.setAttribute(
-    HTML_ELEMENT_NODE_ID_ATTRIBUTE_KEY,
-    node.nodeId.toString()
-  );
-}
-
-function getElementNodesMapFromSet(
-  nodeIds: Set<number>,
-  node: ElementNode<any, any>
-) {
-  const nodes = new Map<number, ElementNode<any, any>>();
-
-  const data = node._getNode();
-
-  if (nodeIds.has(data.nodeId)) {
-    nodes.set(data.nodeId, node);
+  private onStateUpdate() {
+    this.updateHTMLElement();
   }
 
-  for (let child of data.children) {
-    child = typeof child === "function" ? child() : child;
+  private createHTMLElement() {
+    const element = document.createElement(this.nodeData.tag);
 
-    if (child instanceof ElementNode) {
-      const childNodes = getElementNodesMapFromSet(nodeIds, child);
+    this.appendAttributes(element);
+    this.appendStyles(element);
+    this.initListeners(element);
+    this.appendChildren(element);
 
-      for (const [id, node] of childNodes.entries()) {
-        nodes.set(id, node);
+    // this.updateReactiveNodes();
+
+    return element;
+  }
+
+  private updateHTMLElement() {
+    const newElement = this.createHTMLElement();
+    this.element.replaceWith(newElement);
+    this.element = newElement;
+
+    // this.updateReactiveNodes();
+  }
+
+  private updateReactiveNodes() {
+    transfer(this.newReactiveNodes, this.prevReactiveNodes);
+  }
+
+  get nodeData() {
+    return this.nodeRef._getNode();
+  }
+
+  private initListeners(element: HTMLElement) {
+    for (const key in this.nodeData.listeners) {
+      if (Object.prototype.hasOwnProperty.call(this.nodeData.listeners, key)) {
+        const listener = this.nodeData.listeners[key];
+        element.addEventListener(key, listener.callback, listener.options);
       }
     }
   }
 
-  return nodes;
+  private appendStyles(element: HTMLElement) {
+    for (const key in this.nodeData.style) {
+      if (Object.prototype.hasOwnProperty.call(this.nodeData.style, key)) {
+        const property = this.nodeData.style[key];
+        element.style[key] = property!;
+      }
+    }
+  }
+
+  private appendAttributes(element: HTMLElement) {
+    for (const key in this.nodeData.attributes) {
+      if (Object.prototype.hasOwnProperty.call(this.nodeData.attributes, key)) {
+        const value = this.nodeData.attributes[key];
+        element.setAttribute(key, value!);
+      }
+    }
+  }
+
+  private appendChild(element: HTMLElement, child: InternalChild) {
+    if (child === null || child === undefined) return;
+
+    if (typeof child === "function") {
+      child = child();
+    }
+
+    if (typeof child === "object" && child[IS_CHILD_LOOP_KEY]) {
+      let { array, callback } = child as ChildLoop<any>;
+
+      if (typeof array === "function") {
+        array = array();
+      }
+
+      for (let index = 0; index < array.length; index++) {
+        const item = array[index];
+        this.appendChild(element, callback(item, index));
+      }
+
+      return;
+    }
+
+    if (child instanceof ElementNode) {
+      element.appendChild(child._getRenderer()._initRender());
+      return;
+    }
+
+    element.appendChild(document.createTextNode(`${child}`));
+  }
+
+  private appendChildren(element: HTMLElement) {
+    for (const key in this.nodeData.children) {
+      if (Object.prototype.hasOwnProperty.call(this.nodeData.children, key)) {
+        this.appendChild(element, this.nodeData.children[key]);
+      }
+    }
+  }
+
+  _getElement() {
+    return this.element;
+  }
+
+  _initRender() {
+    this.element = this.createHTMLElement();
+    return this.element;
+  }
 }
 
-function getHTMLElementByNodeId(nodeId: number) {
-  return appRootHTML.querySelector(
-    `[${HTML_ELEMENT_NODE_ID_ATTRIBUTE_KEY}="${nodeId}"]`
-  );
+export default function render(root: HTMLElement, app: ElementNode<any, any>) {
+  if (!root) {
+    throw new Error("Please provide a valid entry for your application");
+  }
+
+  root.appendChild(app._getRenderer()._initRender());
+}
+
+function transfer<T>(a: T[], b: T[]) {
+  for (let index = 0; index < a.length; index++) {
+    b[index] = a[index];
+  }
+
+  a.splice(0, a.length);
 }

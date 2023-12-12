@@ -1,9 +1,16 @@
-import { IS_STATE_KEY, STATE_BIND_KEY, StateValue } from "./state";
+import { Renderer } from "./renderer";
+import { IS_STATE_KEY, StateValue } from "./state";
 
 export type ElementNodePropery<T> = (() => T) | T;
 
+export type ChildLoop<T> = {
+  array: ElementNodePropery<T[]>;
+  callback: (value: T, index: number) => Child;
+};
+
 export type Child =
   | ElementNode<any, any>
+  | ChildLoop<any>
   | string
   | number
   | boolean
@@ -11,8 +18,8 @@ export type Child =
   | undefined;
 export type Children = Child[];
 
-type InternalChild = ElementNodePropery<Child>;
-type InternalChildren = InternalChild[];
+export type InternalChild = ElementNodePropery<Child>;
+export type InternalChildren = InternalChild[];
 
 export type ElementListener<K extends keyof HTMLElementEventMap> = {
   callback: (event: HTMLElementEventMap[K]) => void;
@@ -25,6 +32,8 @@ export type ElementNodeListeners = Record<string, ElementListener<any>>;
 export type ElementNodeAttributes = Record<string, string>;
 
 let globalNodeId = 0;
+
+export const IS_CHILD_LOOP_KEY = Symbol("_isChildLoop");
 
 export type ElementNodeData = ReturnType<ElementNode<any, any>["_getNode"]>;
 
@@ -41,7 +50,7 @@ export class ElementNode<
   private readonly listeners: ElementNodeListeners = {};
   private readonly attributes: ElementNodeAttributes = {};
 
-  private readonly state: S | void = void 0;
+  private readonly renderer: Renderer;
 
   constructor(tag: N, state?: S) {
     if (state && !state[IS_STATE_KEY]) {
@@ -49,15 +58,12 @@ export class ElementNode<
     }
 
     this.tag = tag;
-    this.state = state;
 
     this.nodeId = globalNodeId;
 
+    this.renderer = new Renderer(this, state);
+
     globalNodeId++;
-
-    this.onStateUpdate = this.onStateUpdate.bind(this);
-
-    this.initStateListener();
   }
 
   listen<
@@ -65,11 +71,13 @@ export class ElementNode<
     EL extends ElementListener<K> = ElementListener<K>
   >(event: K, callback: EL["callback"], options?: EL["options"]) {
     this.listeners[event] = { callback, options };
+
     return this;
   }
 
   attribute(key: string, value: string) {
     this.attributes[key] = value;
+
     return this;
   }
 
@@ -80,6 +88,7 @@ export class ElementNode<
         this.style[key] = property!;
       }
     }
+
     return this;
   }
 
@@ -88,14 +97,26 @@ export class ElementNode<
     return this;
   }
 
-  private initStateListener() {
-    if (this.state) {
-      this.state[STATE_BIND_KEY](this.nodeId, this.onStateUpdate);
-    }
-  }
+  forEachChild<T>(
+    array: ElementNodePropery<T[]>,
+    callback: (value: T, index: number) => Child
+  ) {
+    const childLoop: ChildLoop<T> = {
+      array,
+      callback,
+    };
 
-  // TODO: remove?
-  private onStateUpdate() {}
+    Object.defineProperty(childLoop, IS_CHILD_LOOP_KEY, {
+      configurable: false,
+      writable: false,
+      enumerable: false,
+      value: true,
+    });
+
+    this._children.push(childLoop);
+
+    return this;
+  }
 
   _getNode() {
     const { tag, nodeId, style, attributes, listeners } = this;
@@ -108,6 +129,10 @@ export class ElementNode<
       listeners,
       children: this._children,
     };
+  }
+
+  _getRenderer() {
+    return this.renderer;
   }
 }
 
