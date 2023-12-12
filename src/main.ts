@@ -47,7 +47,7 @@ const app = Element("div")
   //     () => Array.from({ length: myState.counter }).fill("Item") as string[],
   //     (item, index) => Element("li").child(`${item}: ${index + 1}`)
   //   )
-  // );
+  // )
   .child(
     Element("ul", myState).forEachChild(
       () => Array.from({ length: myState.counter }).fill("Item") as string[],

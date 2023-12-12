@@ -7,7 +7,7 @@ import {
 import { STATE_BIND_KEY, StateValue } from "./state";
 
 export class Renderer {
-  private element!: HTMLElement;
+  private element!: () => HTMLElement;
   private nodeRef: ElementNode;
   private readonly stateRef: StateValue | void = void 0;
 
@@ -35,32 +35,38 @@ export class Renderer {
 
     this.appendNodeData(element);
 
-    return element;
+    return () => element;
   }
 
   private updateHTMLElement() {
     const newElement = this.createHTMLElement();
 
-    this.patchTree(this.element, newElement);
+    this.element = this.patchTree(this.element(), newElement());
+    // console.log(this.element());
   }
-
-  // private updateReactiveNodes() {
-  //   transfer(this.newReactiveNodes, this.prevReactiveNodes);
-  // }
 
   private patchTree(prev: Element | ChildNode, updated: Element | ChildNode) {
     const prevCloneWithoutChildren = prev.cloneNode(false);
     const newCloneWithoutChildren = updated.cloneNode(false);
 
+    if (newCloneWithoutChildren.nodeName === "SPAN") {
+      console.log(
+        "COMPARE",
+        prev.style.backgroundColor,
+        updated.style.backgroundColor
+      );
+    }
+
     if (!prevCloneWithoutChildren.isEqualNode(newCloneWithoutChildren)) {
-      // const prevCloneWithChildren = prev.cloneNode(true);
+      const prevCloneWithChildren = prev.cloneNode(true);
+
+      for (const node of prevCloneWithChildren.childNodes) {
+        newCloneWithoutChildren.appendChild(node.cloneNode(true));
+      }
+
       prev.replaceWith(newCloneWithoutChildren);
-
-      // console.log({ prev, updated }, prevCloneWithChildren.childNodes);
-
-      // for (const node of prevCloneWithChildren.childNodes) {
-      //   prev.appendChild(node);
-      // }
+      // @ts-ignore
+      prev = newCloneWithoutChildren;
     }
 
     if (prev.childNodes.length > updated.childNodes.length) {
@@ -84,6 +90,8 @@ export class Renderer {
 
       prev.appendChild(newChild);
     }
+
+    return () => prev;
   }
 
   get nodeData() {
@@ -124,10 +132,13 @@ export class Renderer {
   }
 
   private appendStyles(element: HTMLElement) {
-    const styles =
-      typeof this.nodeData.style === "function"
-        ? this.nodeData.style()
-        : this.nodeData.style;
+    let styles = this.nodeData.style;
+    typeof this.nodeData.style === "function";
+
+    if (typeof this.nodeData.style === "function") {
+      styles = this.nodeData.style();
+      // console.log("ACTUAL STYLES", styles?.backgroundColor);
+    }
 
     for (const key in styles) {
       if (Object.prototype.hasOwnProperty.call(styles, key)) {
@@ -191,7 +202,7 @@ export class Renderer {
 
   _initRender() {
     this.element = this.createHTMLElement();
-    return this.element;
+    return this.element();
   }
 }
 
