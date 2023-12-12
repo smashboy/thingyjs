@@ -9,7 +9,7 @@ export type ChildLoop<T> = {
 };
 
 export type Child =
-  | ElementNode<any, any>
+  | ElementNode
   | ChildLoop<any>
   | string
   | number
@@ -35,11 +35,11 @@ let globalNodeId = 0;
 
 export const IS_CHILD_LOOP_KEY = Symbol("_isChildLoop");
 
-export type ElementNodeData = ReturnType<ElementNode<any, any>["_getNode"]>;
+export type ElementNodeData = ReturnType<ElementNode["_getNode"]>;
 
 export class ElementNode<
-  N extends keyof HTMLElementTagNameMap,
-  S extends StateValue
+  N extends keyof HTMLElementTagNameMap = keyof HTMLElementTagNameMap,
+  S extends StateValue = StateValue
 > {
   private readonly nodeId: number;
 

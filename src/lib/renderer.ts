@@ -8,13 +8,10 @@ import { STATE_BIND_KEY, StateValue } from "./state";
 
 export class Renderer {
   private element!: HTMLElement;
-  private nodeRef: ElementNode<any, any>;
+  private nodeRef: ElementNode;
   private readonly stateRef: StateValue | void = void 0;
 
-  // private readonly prevReactiveNodes: Children = [];
-  // private readonly newReactiveNodes: Children = [];
-
-  constructor(node: ElementNode<any, any>, state?: StateValue) {
+  constructor(node: ElementNode, state?: StateValue) {
     this.nodeRef = node;
     this.stateRef = state;
 
@@ -36,12 +33,7 @@ export class Renderer {
   private createHTMLElement() {
     const element = document.createElement(this.nodeData.tag);
 
-    this.appendAttributes(element);
-    this.appendStyles(element);
-    this.initListeners(element);
-    this.appendChildren(element);
-
-    // this.updateReactiveNodes();
+    this.appendNodeData(element);
 
     return element;
   }
@@ -49,21 +41,61 @@ export class Renderer {
   private updateHTMLElement() {
     const newElement = this.createHTMLElement();
 
-    // TODO: deep diff
-    if (this.element.isEqualNode(newElement)) return;
-
-    this.element.replaceWith(newElement);
-    this.element = newElement;
-
-    // this.updateReactiveNodes();
+    this.patchTree(this.element, newElement);
   }
 
   // private updateReactiveNodes() {
   //   transfer(this.newReactiveNodes, this.prevReactiveNodes);
   // }
 
+  private patchTree(prev: Element | ChildNode, updated: Element | ChildNode) {
+    const prevCloneWithoutChildren = prev.cloneNode(false);
+    const newCloneWithoutChildren = updated.cloneNode(false);
+
+    if (!prevCloneWithoutChildren.isEqualNode(newCloneWithoutChildren)) {
+      prev.replaceWith(newCloneWithoutChildren);
+    }
+
+    if (prev.childNodes.length > updated.childNodes.length) {
+      for (
+        let index = updated.childNodes.length - 1;
+        index < prev.childNodes.length;
+        index++
+      ) {
+        prev.childNodes[index]?.remove();
+      }
+    }
+
+    for (let index = 0; index < updated.childNodes.length; index++) {
+      const newChild = updated.childNodes[index];
+      const prevChild = prev.childNodes[index];
+
+      if (prevChild) {
+        this.patchTree(prevChild, newChild);
+        continue;
+      }
+
+      prev.appendChild(newChild);
+    }
+  }
+
   get nodeData() {
     return this.nodeRef._getNode();
+  }
+
+  private appendNodeData(
+    element: HTMLElement,
+    resetListeners: boolean = false
+  ) {
+    this.appendAttributes(element);
+    this.appendStyles(element);
+
+    if (resetListeners) {
+      this.clearListeners(element);
+    }
+
+    this.initListeners(element);
+    this.appendChildren(element);
   }
 
   private initListeners(element: HTMLElement) {
@@ -71,6 +103,15 @@ export class Renderer {
       if (Object.prototype.hasOwnProperty.call(this.nodeData.listeners, key)) {
         const listener = this.nodeData.listeners[key];
         element.addEventListener(key, listener.callback, listener.options);
+      }
+    }
+  }
+
+  private clearListeners(element: HTMLElement) {
+    for (const key in this.nodeData.listeners) {
+      if (Object.prototype.hasOwnProperty.call(this.nodeData.listeners, key)) {
+        const listener = this.nodeData.listeners[key];
+        element.removeEventListener(key, listener.callback, listener.options);
       }
     }
   }
@@ -142,7 +183,7 @@ export class Renderer {
   }
 }
 
-export default function render(root: HTMLElement, app: ElementNode<any, any>) {
+export default function render(root: HTMLElement, app: ElementNode) {
   if (!root) {
     throw new Error("Please provide a valid entry for your application");
   }
