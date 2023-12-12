@@ -49,14 +49,6 @@ export class Renderer {
     const prevCloneWithoutChildren = prev.cloneNode(false);
     const newCloneWithoutChildren = updated.cloneNode(false);
 
-    if (newCloneWithoutChildren.nodeName === "SPAN") {
-      console.log(
-        "COMPARE",
-        prev.style.backgroundColor,
-        updated.style.backgroundColor
-      );
-    }
-
     if (!prevCloneWithoutChildren.isEqualNode(newCloneWithoutChildren)) {
       const prevCloneWithChildren = prev.cloneNode(true);
 
