@@ -31,8 +31,12 @@ const app = Element("div")
   )
   .child(
     Element("ul", myState).forEachChild(
-      Array.from({ length: 10000 }).fill("Item") as string[],
-      (item, index) => Element("li").child(`${item}: ${index + 1}`)
+      () => Array.from({ length: myState.counter }).fill("Item") as string[],
+      (item, index) => {
+        if (index % 2 === 0) {
+          return Element("li").child(`${item}: ${index + 1}`);
+        }
+      }
     )
   );
 

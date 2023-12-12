@@ -1,7 +1,5 @@
 import {
-  Child,
   ChildLoop,
-  Children,
   ElementNode,
   IS_CHILD_LOOP_KEY,
   InternalChild,
@@ -13,8 +11,8 @@ export class Renderer {
   private nodeRef: ElementNode<any, any>;
   private readonly stateRef: StateValue | void = void 0;
 
-  private readonly prevReactiveNodes: Children = [];
-  private readonly newReactiveNodes: Children = [];
+  // private readonly prevReactiveNodes: Children = [];
+  // private readonly newReactiveNodes: Children = [];
 
   constructor(node: ElementNode<any, any>, state?: StateValue) {
     this.nodeRef = node;
@@ -50,15 +48,19 @@ export class Renderer {
 
   private updateHTMLElement() {
     const newElement = this.createHTMLElement();
+
+    // TODO: deep diff
+    if (this.element.isEqualNode(newElement)) return;
+
     this.element.replaceWith(newElement);
     this.element = newElement;
 
     // this.updateReactiveNodes();
   }
 
-  private updateReactiveNodes() {
-    transfer(this.newReactiveNodes, this.prevReactiveNodes);
-  }
+  // private updateReactiveNodes() {
+  //   transfer(this.newReactiveNodes, this.prevReactiveNodes);
+  // }
 
   get nodeData() {
     return this.nodeRef._getNode();
@@ -98,6 +100,7 @@ export class Renderer {
       child = child();
     }
 
+    // @ts-ignore
     if (typeof child === "object" && child[IS_CHILD_LOOP_KEY]) {
       let { array, callback } = child as ChildLoop<any>;
 
@@ -145,12 +148,4 @@ export default function render(root: HTMLElement, app: ElementNode<any, any>) {
   }
 
   root.appendChild(app._getRenderer()._initRender());
-}
-
-function transfer<T>(a: T[], b: T[]) {
-  for (let index = 0; index < a.length; index++) {
-    b[index] = a[index];
-  }
-
-  a.splice(0, a.length);
 }

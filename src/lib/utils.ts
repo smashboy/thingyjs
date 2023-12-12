@@ -29,3 +29,11 @@ export function getSetDiff<T>(a: Set<T>, b: Set<T>) {
 
   return diff;
 }
+
+export function transfer<T>(a: T[], b: T[]) {
+  for (let index = 0; index < a.length; index++) {
+    b[index] = a[index];
+  }
+
+  a.splice(0, a.length);
+}
