@@ -11,11 +11,16 @@ const app = Element("div")
     Element("h1", myState).child(() => `Another count: ${myState.counter * 2}`)
   )
   .child(
+    Element("div", myState).child(() =>
+      myState.counter % 2 === 0 ? "Test" : null
+    )
+  )
+  .child(
     Element("div")
       .child(
         Element("button")
           .child("+")
-          .listen("click", () => (myState.counter += 1000))
+          .listen("click", () => (myState.counter += 10))
           .styles({ backgroundColor: "green" })
       )
       .child(
@@ -23,7 +28,7 @@ const app = Element("div")
           .child("-")
           .listen("click", () => {
             if (myState.counter > 0) {
-              myState.counter -= 1000;
+              myState.counter -= 10;
             }
           })
           .styles({ backgroundColor: "red" })
@@ -52,13 +57,15 @@ const app = Element("div")
   //   )
   // )
   .child(
-    Element("ul", myState).forEachChild(
-      () => Array.from({ length: myState.counter }).fill("Item") as string[],
-      (item, index) =>
-        Element("li")
-          .styles({ backgroundColor: index % 2 === 0 ? "green" : "red" })
-          .child(`${item}: ${index + 1}`)
-    )
+    Element("ul", myState)
+      .forEachChild(
+        () => Array.from({ length: myState.counter }).fill("Item") as string[],
+        (item, index) =>
+          Element("li")
+            .styles({ backgroundColor: index % 2 === 0 ? "green" : "red" })
+            .child(`${item}: ${index + 1}`)
+      )
+      .child(Element("li", myState).child(() => `Total: ${myState.counter}`))
   );
 
 render(document.getElementById("app")!, app);

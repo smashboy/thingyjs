@@ -1,11 +1,11 @@
 import { Renderer } from "./renderer";
 import { IS_STATE_KEY, StateValue } from "./state";
 
-export type ElementNodePropery<T> = (() => T) | T;
+export type NodeReactivePropery<T> = (() => T) | T;
 
 export type ChildLoop<T> = {
-  array: ElementNodePropery<T[]>;
-  callback: (value: T, index: number) => Child;
+  array: NodeReactivePropery<T[]>;
+  callback: (value: T, index: number, array: T[]) => Child;
 };
 
 export type Child =
@@ -18,15 +18,15 @@ export type Child =
   | undefined;
 export type Children = Child[];
 
-export type InternalChild = ElementNodePropery<Child>;
-export type InternalChildren = InternalChild[];
+export type ReactiveChild = NodeReactivePropery<Child>;
+export type ReactiveChildren = ReactiveChild[];
 
 export type ElementListener<K extends keyof HTMLElementEventMap> = {
   callback: (event: HTMLElementEventMap[K]) => void;
   options?: boolean | AddEventListenerOptions;
 };
 
-export type ElementNodeStyles = ElementNodePropery<
+export type ElementNodeStyles = NodeReactivePropery<
   Partial<CSSStyleDeclaration>
 >;
 export type ElementNodeListeners = Record<string, ElementListener<any>>;
@@ -46,7 +46,7 @@ export class ElementNode<
   private readonly nodeId: number;
 
   private readonly tag: N;
-  private readonly _children: InternalChildren = [];
+  private readonly _children: ReactiveChildren = [];
 
   private style: ElementNodeStyles = {};
   private readonly listeners: ElementNodeListeners = {};
@@ -101,13 +101,13 @@ export class ElementNode<
     return this;
   }
 
-  child(child: InternalChild) {
+  child(child: ReactiveChild) {
     this._children.push(child);
     return this;
   }
 
   forEachChild<T>(
-    array: ElementNodePropery<T[]>,
+    array: NodeReactivePropery<T[]>,
     callback: (value: T, index: number) => Child
   ) {
     const childLoop: ChildLoop<T> = {
@@ -142,6 +142,15 @@ export class ElementNode<
 
   _getRenderer() {
     return this.renderer;
+  }
+
+  static is(value: unknown): value is ElementNode {
+    return value instanceof ElementNode;
+  }
+
+  static isChildLoop(value: unknown): value is ChildLoop<any> {
+    // @ts-ignore
+    return typeof value === "object" && value[IS_CHILD_LOOP_KEY];
   }
 }
 

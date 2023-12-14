@@ -1,3 +1,5 @@
+import { NodeReactivePropery } from "./Element";
+
 export function isProxy(obj: any) {
   try {
     // @ts-ignore
@@ -36,4 +38,8 @@ export function transfer<T>(a: T[], b: T[]) {
   }
 
   a.splice(0, a.length);
+}
+
+export function unwrap<T>(value: NodeReactivePropery<T>) {
+  return typeof value === "function" ? (value as () => T)() : value;
 }
