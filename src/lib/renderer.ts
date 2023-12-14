@@ -3,7 +3,6 @@ import {
   ChildLoop,
   ElementNode,
   ElementNodeData,
-  IS_CHILD_LOOP_KEY,
   ReactiveChild,
 } from "./Element";
 import { STATE_BIND_KEY, StateValue } from "./state";
