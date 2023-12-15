@@ -205,11 +205,19 @@ function patchTree(prev: Element | ChildNode, node: ElementNode | Child) {
     })();
 
     if (!prevCloneWithoutChildren.isEqualNode(newCloneWithoutChildren)) {
-      appendNodeData(prev as HTMLElement, data, {
-        resetListeners: true,
-        resetAttributes: true,
-        withoutChildren: true,
-      });
+      if (prev.nodeName === newCloneWithoutChildren.nodeName) {
+        appendNodeData(prev as HTMLElement, data, {
+          resetListeners: true,
+          resetAttributes: true,
+          withoutChildren: true,
+        });
+      }
+
+      const newClone = createHTMLElement(data)();
+
+      prev.replaceWith(newClone);
+
+      return () => newClone;
     }
 
     let newChildCount = 0;

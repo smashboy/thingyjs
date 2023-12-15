@@ -47,11 +47,72 @@ const UserTodosScreen = () => {
   const todosStore = state<TodoState>({ todos: [] });
 
   const logout = () => {
-    console.log("SIGN OUT");
     userStore.user = null;
   };
 
-  return Element("button").listen("click", logout).child("Sign out");
+  const onNewTodoCreate = (event: SubmitEvent) => {
+    event.preventDefault();
+    todosStore.todos = [
+      ...todosStore.todos,
+      { description: event.target[0].value },
+    ];
+  };
+
+  return Element("div")
+    .child(
+      Element("div")
+        .child(
+          Element("h3", userStore).child(
+            () => `Welcome back ${userStore.user!.username}`
+          )
+        )
+        .child(Element("button").listen("click", logout).child("Sign out"))
+    )
+    .child(
+      Element("div", todosStore)
+        .child(
+          Element("h4").child(
+            () => `Create new todo ${todosStore.todos.length}`
+          )
+        )
+        .child(TodoForm({ onSubmit: onNewTodoCreate }))
+    )
+    .child(TodosList({ todos: todosStore }));
+};
+
+interface TodoFormProps {
+  onSubmit: (event: SubmitEvent) => void;
+}
+
+const TodoForm = (props: TodoFormProps) => {
+  return Element("form")
+    .child(Element("input").attribute("placeholder", "Your todo..."))
+    .child(Element("button").attribute("type", "submit").child("Create"))
+    .listen("submit", props.onSubmit);
+};
+
+interface TodosListProps {
+  todos: TodoState;
+}
+
+const TodosList = (props: TodosListProps) => {
+  return Element("div", props.todos).forEachChild(
+    () => props.todos.todos,
+    (todo, index) => TodoItem({ todo, index })
+  );
+};
+
+interface TodoItemProps {
+  todo: Todo;
+  index: number;
+}
+
+const TodoItem = (props: TodoItemProps) => {
+  const { todo, index } = props;
+
+  const isEditModeEnabledState = state({ isEditMode: false });
+
+  return Element("div").child(() => `${todo.description}`);
 };
 
 export const App = () => {
