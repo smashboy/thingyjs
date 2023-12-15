@@ -1,4 +1,4 @@
-import { NodeReactivePropery } from "./Element";
+import { ElementNode, NodeReactivePropery } from "./elements/Element";
 
 export function isProxy(obj: any) {
   try {
@@ -42,4 +42,12 @@ export function transfer<T>(a: T[], b: T[]) {
 
 export function unwrap<T>(value: NodeReactivePropery<T>) {
   return typeof value === "function" ? (value as () => T)() : value;
+}
+
+export function createNodeFunction<
+  C extends abstract new (...args: any) => any,
+  I extends ElementNode
+>(Node: ConstructorParameters<C>) {
+  // @ts-ignore
+  return (...args: ConstructorParameters<C>) => new Node(...args) as I;
 }

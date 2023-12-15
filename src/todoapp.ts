@@ -1,4 +1,4 @@
-import { Element } from "./lib/Element";
+import { Element } from "./lib//elements/Element";
 import { state } from "./lib/state";
 
 interface Todo {
@@ -75,44 +75,59 @@ const UserTodosScreen = () => {
             () => `Create new todo ${todosStore.todos.length}`
           )
         )
-        .child(TodoForm({ onSubmit: onNewTodoCreate }))
+        .child(TodoForm(onNewTodoCreate))
     )
-    .child(TodosList({ todos: todosStore }));
+    .child(TodosList(todosStore));
 };
 
-interface TodoFormProps {
-  onSubmit: (event: SubmitEvent) => void;
-}
-
-const TodoForm = (props: TodoFormProps) => {
+const TodoForm = (
+  onSubmit: (event: SubmitEvent) => void,
+  initialValue = ""
+) => {
   return Element("form")
-    .child(Element("input").attribute("placeholder", "Your todo..."))
+    .child(
+      Element("input")
+        .attribute("value", initialValue)
+        .attribute("placeholder", "Your todo...")
+    )
     .child(Element("button").attribute("type", "submit").child("Create"))
-    .listen("submit", props.onSubmit);
+    .listen("submit", onSubmit);
 };
 
-interface TodosListProps {
-  todos: TodoState;
-}
-
-const TodosList = (props: TodosListProps) => {
-  return Element("div", props.todos).forEachChild(
-    () => props.todos.todos,
-    (todo, index) => TodoItem({ todo, index })
+const TodosList = (state: TodoState) => {
+  return Element("div", state).forEachChild(
+    () => state.todos,
+    (todo, index) => TodoItem(todo, index, state)
   );
 };
 
-interface TodoItemProps {
-  todo: Todo;
-  index: number;
-}
-
-const TodoItem = (props: TodoItemProps) => {
-  const { todo, index } = props;
-
+const TodoItem = (todo: Todo, index: number, todoState: TodoState) => {
   const isEditModeEnabledState = state({ isEditMode: false });
 
-  return Element("div").child(() => `${todo.description}`);
+  const toggleEditMode = () =>
+    (isEditModeEnabledState.isEditMode = !isEditModeEnabledState.isEditMode);
+
+  const onTodoUpdate = (event: SubmitEvent) => {
+    const updatedTodo = event.target[0].value;
+    todoState.todos = todoState.todos.map((todo, i) =>
+      i === index ? { description: updatedTodo } : todo
+    );
+  };
+
+  const onTodoDelete = () => {
+    todoState.todos = todoState.todos.filter((_, i) => i !== index);
+  };
+
+  return Element("div", isEditModeEnabledState)
+    .child(() =>
+      isEditModeEnabledState.isEditMode
+        ? TodoForm(onTodoUpdate, todo.description).child(
+            Element("button").listen("click", toggleEditMode).child("Cancel")
+          )
+        : Element("div").child(() => `${todo.description}`)
+    )
+    .child(Element("button").listen("click", toggleEditMode).child("Edit"))
+    .child(Element("button").listen("click", onTodoDelete).child("Delete"));
 };
 
 export const App = () => {

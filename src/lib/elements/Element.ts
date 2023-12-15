@@ -1,5 +1,7 @@
-import { Renderer } from "./renderer";
-import { IS_STATE_KEY, StateValue } from "./state";
+import * as CSS from "csstype";
+import { Renderer } from "../renderer";
+import { IS_STATE_KEY, StateValue } from "../state";
+import { createNodeFunction } from "../utils";
 
 export type NodeReactivePropery<T> = (() => T) | T;
 
@@ -26,9 +28,7 @@ export type ElementListener<K extends keyof HTMLElementEventMap> = {
   options?: boolean | AddEventListenerOptions;
 };
 
-export type ElementNodeStyles = NodeReactivePropery<
-  Partial<CSSStyleDeclaration>
->;
+export type ElementNodeStyles = NodeReactivePropery<Partial<CSS.Properties>>;
 export type ElementNodeListeners = Record<string, ElementListener<any>>;
 
 export type ElementNodeAttributes = Record<string, string>;
@@ -48,7 +48,7 @@ export class ElementNode<
   private readonly tag: N;
   private readonly _children: ReactiveChildren = [];
 
-  private style: ElementNodeStyles = {};
+  private style: ElementNodeStyles[] = [];
   private readonly listeners: ElementNodeListeners = {};
   private readonly attributes: ElementNodeAttributes = {};
 
@@ -60,9 +60,7 @@ export class ElementNode<
     }
 
     this.tag = tag;
-
     this.nodeId = globalNodeId;
-
     this.renderer = new Renderer(this, state);
 
     globalNodeId++;
@@ -84,19 +82,21 @@ export class ElementNode<
   }
 
   styles(styles: ElementNodeStyles) {
-    if (typeof styles === "function") {
-      this.style = styles;
-      return this;
-    }
+    this.style.push(styles);
 
-    this.style = {};
+    // if (typeof styles === "function") {
+    //   this.style = styles;
+    //   return this;
+    // }
 
-    for (const key in styles) {
-      if (Object.prototype.hasOwnProperty.call(styles, key)) {
-        const property = styles[key];
-        this.style[key] = property!;
-      }
-    }
+    // this.style = {};
+
+    // for (const key in styles) {
+    //   if (Object.prototype.hasOwnProperty.call(styles, key)) {
+    //     const property = styles[key];
+    //     this.style[key] = property!;
+    //   }
+    // }
 
     return this;
   }
@@ -149,14 +149,14 @@ export class ElementNode<
   }
 
   static isChildLoop(value: unknown): value is ChildLoop<any> {
-    // @ts-ignore
-    return typeof value === "object" && value[IS_CHILD_LOOP_KEY];
+    return (
+      // @ts-ignore
+      typeof value === "object" && value !== null && value[IS_CHILD_LOOP_KEY]
+    );
   }
 }
 
-export function Element<
-  N extends keyof HTMLElementTagNameMap,
-  S extends StateValue
->(tag: N, state?: S) {
-  return new ElementNode(tag, state);
-}
+export const Element = createNodeFunction<typeof ElementNode, ElementNode>(
+  // @ts-ignore
+  ElementNode
+);

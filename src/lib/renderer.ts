@@ -4,7 +4,7 @@ import {
   ElementNode,
   ElementNodeData,
   ReactiveChild,
-} from "./Element";
+} from "./elements/Element";
 import { STATE_BIND_KEY, StateValue } from "./state";
 import { unwrap } from "./utils";
 
@@ -85,7 +85,7 @@ function appendNodeData(
   } = options || {};
 
   if (resetAttributes) {
-    _resetAttributes(element);
+    clearAttributes(element);
   }
 
   appendAttributes(element, node);
@@ -123,12 +123,14 @@ function clearListeners(element: HTMLElement, node: ElementNodeData) {
 }
 
 function appendStyles(element: HTMLElement, node: ElementNodeData) {
-  const styles = unwrap(node.style);
+  for (let s of node.style) {
+    s = unwrap(s);
 
-  for (const key in styles) {
-    if (Object.prototype.hasOwnProperty.call(styles, key)) {
-      const property = styles[key];
-      element.style[key] = property!;
+    for (const key in s) {
+      if (Object.prototype.hasOwnProperty.call(s, key)) {
+        const property = s[key];
+        element.style[key] = property!;
+      }
     }
   }
 }
@@ -142,7 +144,7 @@ function appendAttributes(element: HTMLElement, node: ElementNodeData) {
   }
 }
 
-function _resetAttributes(element: HTMLElement) {
+function clearAttributes(element: HTMLElement) {
   for (const attr of element.attributes) {
     element.removeAttribute(attr.name);
   }
