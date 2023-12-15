@@ -1,4 +1,10 @@
 import { Element } from "./lib//elements/Element";
+import { Button } from "./lib/elements/Button";
+import { HStack } from "./lib/elements/HStack";
+import { Input } from "./lib/elements/Input";
+import { Text } from "./lib/elements/Text";
+import { Title } from "./lib/elements/Title";
+import { VStack } from "./lib/elements/VStack";
 import { state } from "./lib/state";
 
 interface Todo {
@@ -24,23 +30,20 @@ const WelcomeScreen = () => {
     }
   };
 
-  return Element("div")
+  const onInputChange = (event: Event) => {
+    loginStore.username = event.target.value;
+  };
+
+  return VStack()
+    .gap("10px")
+    .align("center")
+    .justify("center")
     .styles({
       width: "100%",
       height: "100%",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      flexDirection: "column",
-      gap: "10px",
     })
-    .child(
-      Element("input").listen(
-        "input",
-        (event) => (loginStore.username = event.target.value)
-      )
-    )
-    .child(Element("button").listen("click", signin).child("Sign in"));
+    .child(Input(onInputChange))
+    .child(Button("Sign in", signin));
 };
 
 const UserTodosScreen = () => {
@@ -58,25 +61,14 @@ const UserTodosScreen = () => {
     ];
   };
 
-  return Element("div")
+  return VStack()
+    .align("flex-start")
     .child(
-      Element("div")
-        .child(
-          Element("h3", userStore).child(
-            () => `Welcome back ${userStore.user!.username}`
-          )
-        )
-        .child(Element("button").listen("click", logout).child("Sign out"))
+      Title(() => `Welcome back ${userStore.user!.username}`, 1, userStore)
     )
-    .child(
-      Element("div", todosStore)
-        .child(
-          Element("h4").child(
-            () => `Create new todo ${todosStore.todos.length}`
-          )
-        )
-        .child(TodoForm(onNewTodoCreate))
-    )
+    .child(Button("Sign out", logout))
+    .child(Text(() => `Create new todo ${todosStore.todos.length}`, todosStore))
+    .child(TodoForm(onNewTodoCreate))
     .child(TodosList(todosStore));
 };
 
