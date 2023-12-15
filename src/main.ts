@@ -1,24 +1,20 @@
+import { Box } from "./lib/elements/Box";
 import { Button } from "./lib/elements/Button";
 import { Element } from "./lib/elements/Element";
 import render from "./lib/renderer";
 import { state } from "./lib/state";
 import "./style.css";
-import { App } from "./todoapp";
 
 const myState = state({ counter: 0 });
 
-const app = Element("div")
+const app = Box()
   .child(Element("h1", myState).child(() => `Count: ${myState.counter}`))
   .child(
     Element("h1", myState).child(() => `Another count: ${myState.counter * 2}`)
   )
+  .child(Box(myState).child(() => (myState.counter % 2 === 0 ? "Test" : null)))
   .child(
-    Element("div", myState).child(() =>
-      myState.counter % 2 === 0 ? "Test" : null
-    )
-  )
-  .child(
-    Element("div")
+    Box()
       .child(
         Button(() => (myState.counter += 1000))
           .child("+")
