@@ -8,7 +8,7 @@ export class ButtonNode<S extends StateValue = StateValue> extends ElementNode<
   S
 > {
   constructor(
-    label: TextNode,
+    label: TextNode | string,
     onClick?: (event: HTMLElementEventMap["click"]) => void,
     state?: S
   ) {

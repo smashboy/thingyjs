@@ -1,12 +1,12 @@
 import { Box } from "./lib/elements/Box";
 import { Button } from "./lib/elements/Button";
+import { Element } from "./lib/elements/Element";
 import { HStack } from "./lib/elements/HStack";
 import { Title } from "./lib/elements/Title";
 import { VStack } from "./lib/elements/VStack";
 import render from "./lib/renderer";
 import { state } from "./lib/state";
 import "./style.css";
-import { App } from "./todoapp";
 
 const myState = state({ counter: 0 });
 
@@ -44,6 +44,29 @@ const app = VStack()
         alignItems: "center",
       }))
       .child(() => `${myState.counter}`)
+  )
+  .child(
+    Element("ul", myState)
+      // .forEachChild(
+      //   () => Array.from({ length: myState.counter }).fill("Item") as string[],
+      //   (item, index) =>
+      //     Element("li")
+      //       .styles({ backgroundColor: index % 2 === 0 ? "green" : "red" })
+      //       .child(`${item}: ${index + 1}`)
+      // )
+      .forEachChild(
+        () => Array.from({ length: myState.counter }).fill("Item") as string[],
+        (item, index) =>
+          Element("li")
+            .styles({ backgroundColor: index % 2 === 0 ? "green" : "red" })
+            .child(`${item}: ${index + 1}`)
+      )
+      .child(Element("li", myState).child(() => `Total: ${myState.counter}`))
+      .child(
+        Element("li", myState).child(
+          () => `Yet another total: ${myState.counter}`
+        )
+      )
   );
 
-render(document.getElementById("app")!, App());
+render(document.getElementById("app")!, app);
