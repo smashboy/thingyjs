@@ -48,7 +48,7 @@ export class ElementNode<
   private readonly tag: N;
   private readonly _children: ReactiveChildren = [];
 
-  private style: ElementNodeStyles[] = [];
+  private readonly style: ElementNodeStyles[] = [];
   private readonly listeners: ElementNodeListeners = {};
   private readonly attributes: ElementNodeAttributes = {};
 
