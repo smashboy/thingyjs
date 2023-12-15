@@ -84,20 +84,6 @@ export class ElementNode<
   styles(styles: ElementNodeStyles) {
     this.style.push(styles);
 
-    // if (typeof styles === "function") {
-    //   this.style = styles;
-    //   return this;
-    // }
-
-    // this.style = {};
-
-    // for (const key in styles) {
-    //   if (Object.prototype.hasOwnProperty.call(styles, key)) {
-    //     const property = styles[key];
-    //     this.style[key] = property!;
-    //   }
-    // }
-
     return this;
   }
 
