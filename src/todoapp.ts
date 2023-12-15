@@ -1,6 +1,5 @@
 import { Element } from "./lib//elements/Element";
 import { Button } from "./lib/elements/Button";
-import { HStack } from "./lib/elements/HStack";
 import { Input } from "./lib/elements/Input";
 import { Text } from "./lib/elements/Text";
 import { Title } from "./lib/elements/Title";
