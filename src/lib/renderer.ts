@@ -59,6 +59,7 @@ export default function render(root: HTMLElement, app: ElementNode) {
 
 interface CreateHTMLOptions {
   resetListeners?: boolean;
+  resetAttributes?: boolean;
   withoutListeners?: boolean;
   withoutChildren?: boolean;
 }
@@ -80,7 +81,12 @@ function appendNodeData(
     resetListeners = false,
     withoutListeners = false,
     withoutChildren = false,
+    resetAttributes = false,
   } = options || {};
+
+  if (resetAttributes) {
+    _resetAttributes(element);
+  }
 
   appendAttributes(element, node);
   appendStyles(element, node);
@@ -136,37 +142,38 @@ function appendAttributes(element: HTMLElement, node: ElementNodeData) {
   }
 }
 
-function appendChild(element: HTMLElement, child: ReactiveChild) {
-  try {
-    if (child === null || child === undefined) return;
-
-    child = unwrap(child);
-
-    // @ts-ignore
-    if (ElementNode.isChildLoop(child)) {
-      let { array, callback } = child as ChildLoop<any>;
-
-      array = unwrap(array);
-
-      for (let index = 0; index < array.length; index++) {
-        const item = array[index];
-
-        appendChild(element, callback(item, index, array));
-      }
-
-      return;
-    }
-
-    if (ElementNode.is(child)) {
-      element.appendChild(child._getRenderer()._initRender());
-      return;
-    }
-
-    element.appendChild(document.createTextNode(`${child}`));
-  } catch (error) {
-    console.error(error);
-    // console.log(element, child);
+function _resetAttributes(element: HTMLElement) {
+  for (const attr of element.attributes) {
+    element.removeAttribute(attr.name);
   }
+}
+
+function appendChild(element: HTMLElement, child: ReactiveChild) {
+  if (child === null || child === undefined) return;
+
+  child = unwrap(child);
+
+  // @ts-ignore
+  if (ElementNode.isChildLoop(child)) {
+    let { array, callback } = child as ChildLoop<any>;
+
+    array = unwrap(array);
+
+    for (let index = 0; index < array.length; index++) {
+      const item = array[index];
+
+      appendChild(element, callback(item, index, array));
+    }
+
+    return;
+  }
+
+  if (ElementNode.is(child)) {
+    element.appendChild(child._getRenderer()._initRender());
+    return;
+  }
+
+  element.appendChild(document.createTextNode(`${child}`));
 }
 
 function appendChildren(element: HTMLElement, node: ElementNodeData) {
@@ -178,18 +185,18 @@ function appendChildren(element: HTMLElement, node: ElementNodeData) {
 }
 
 function patchTree(prev: Element | ChildNode, node: ElementNode | Child) {
-  const prevCloneWithoutChildren = prev.cloneNode(false);
   const u = unwrap(node);
 
   if (!ElementNode.is(u)) {
     const newClone = document.createTextNode(`${node}`);
 
     if (!prev.isEqualNode(newClone)) {
-      prev.nodeValue = `${node}`;
+      prev.replaceWith(newClone);
     }
   }
 
   if (ElementNode.is(u)) {
+    const prevCloneWithoutChildren = prev.cloneNode(false);
     const data = u._getNode();
 
     const newCloneWithoutChildren = createHTMLElement(data, {
@@ -199,20 +206,16 @@ function patchTree(prev: Element | ChildNode, node: ElementNode | Child) {
 
     if (!prevCloneWithoutChildren.isEqualNode(newCloneWithoutChildren)) {
       appendNodeData(prev as HTMLElement, data, {
-        withoutListeners: true,
+        resetListeners: true,
+        resetAttributes: true,
         withoutChildren: true,
       });
     }
 
     let newChildCount = 0;
 
-    // if (prev.nodeName === "UL") {
-    //   console.log(prev, node);
-    // }
-
     for (let i = 0; i < data.children.length; i++) {
       const child = unwrap(data.children[i]);
-      const prevHTMLChild = prev.childNodes[i];
 
       if (ElementNode.isChildLoop(child)) {
         let { array, callback } = child;
@@ -237,9 +240,7 @@ function patchTree(prev: Element | ChildNode, node: ElementNode | Child) {
 
       newChildCount++;
 
-      // if (prev.nodeName === "UL") {
-      //   console.log(prevHTMLChild, node);
-      // }
+      const prevHTMLChild = prev.childNodes[newChildCount - 1];
 
       if (prevHTMLChild) {
         patchTree(prevHTMLChild, child);

@@ -66,6 +66,11 @@ const app = Element("div")
             .child(`${item}: ${index + 1}`)
       )
       .child(Element("li", myState).child(() => `Total: ${myState.counter}`))
+      .child(
+        Element("li", myState).child(
+          () => `Yet another total: ${myState.counter}`
+        )
+      )
   );
 
 render(document.getElementById("app")!, app);
