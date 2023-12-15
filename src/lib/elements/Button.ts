@@ -1,7 +1,7 @@
 import { StateValue } from "../state";
 import { createNodeFunction } from "../utils";
 import { ElementNode } from "./Element";
-import { TextNode } from "./Text";
+import { Text, TextNode } from "./Text";
 
 export class ButtonNode<S extends StateValue = StateValue> extends ElementNode<
   "button",
@@ -14,7 +14,7 @@ export class ButtonNode<S extends StateValue = StateValue> extends ElementNode<
   ) {
     super("button", state);
 
-    this.child(label);
+    this.child(typeof label === "string" ? Text(label) : label);
 
     if (onClick) {
       this.listen("click", onClick);
