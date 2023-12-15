@@ -7,12 +7,14 @@ export class ButtonNode<S extends StateValue = StateValue> extends ElementNode<
   S
 > {
   constructor(
-    action: (event: HTMLElementEventMap["click"]) => void,
+    action?: (event: HTMLElementEventMap["click"]) => void,
     state?: S
   ) {
     super("button", state);
 
-    this.listen("click", action);
+    if (action) {
+      this.listen("click", action);
+    }
   }
 }
 
