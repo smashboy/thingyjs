@@ -28,7 +28,11 @@ const app = VStack()
         }).styles({ backgroundColor: 'red' })
       )
   )
-  .child(Box(myState).child(() => (myState.counter % 2 === 0 ? 'Test' : null)))
+  .child(
+    Box(myState).child(() =>
+      Number(myState.counter.toString().split('')[0]) % 2 === 0 ? 'Test' : null
+    )
+  )
   .child(
     Box(myState)
       .styles(() => ({
