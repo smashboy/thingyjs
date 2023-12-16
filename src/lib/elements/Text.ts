@@ -1,28 +1,25 @@
 import * as CSS from 'csstype'
-import { StateValue } from '../state'
-import { ElementNode, NodeReactivePropery } from './Element'
+import { ElementNode } from './Element'
 import { createNodeFunction } from '../utils'
 
-export class TextNode<S extends StateValue = StateValue> extends ElementNode<
-  'div',
-  S
-> {
-  constructor(text: NodeReactivePropery<string>, state?: S) {
-    super('div', state)
+export class TextNode extends ElementNode<'div'> {
+  private textNode!: Text
 
-    this.child(text)
+  constructor(text: string) {
+    super('div')
+
+    this.child(text, (node) => (this.textNode = node as Text))
   }
 
-  size(size: NodeReactivePropery<CSS.Property.FontSize>) {
-    if (typeof size === 'function') {
-      this.styles(() => ({
-        fontSize: size()
-      }))
-    } else {
-      this.styles({
-        fontSize: size
-      })
-    }
+  setValue(value: string) {
+    this.textNode.remove()
+    this.child(value, (node) => (this.textNode = node as Text))
+  }
+
+  size(size: CSS.Property.FontSize) {
+    this.styles({
+      fontSize: size
+    })
 
     return this
   }

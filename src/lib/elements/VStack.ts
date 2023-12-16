@@ -1,10 +1,9 @@
-import { StateValue } from '../state'
 import { createNodeFunction } from '../utils'
 import { FlexNode } from './Flex'
 
-export class VStackNode<S extends StateValue = StateValue> extends FlexNode<S> {
-  constructor(state?: S) {
-    super(state)
+export class VStackNode extends FlexNode {
+  constructor() {
+    super()
 
     this.direction('column')
     this.justify('flex-start')

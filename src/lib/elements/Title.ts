@@ -1,12 +1,10 @@
-import { StateValue } from '../state'
-import { ElementNode, NodeReactivePropery } from './Element'
+import { ElementNode } from './Element'
 import { createNodeFunction } from '../utils'
 
-export class TitleNode<
-  S extends StateValue = StateValue,
-  L = 1 | 2 | 3 | 4 | 5 | 6
-> extends ElementNode<'h1', S> {
-  constructor(text: NodeReactivePropery<string>, level: L = 1, state?: S) {
+type TitleLevel = 1 | 2 | 3 | 4 | 5 | 6
+
+export class TitleNode<L extends TitleLevel> extends ElementNode<'h1'> {
+  constructor(text: string, level: L = 1) {
     // @ts-ignore
     super(`h${level}`, state)
 

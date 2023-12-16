@@ -5,7 +5,6 @@ import { Form } from './lib/elements/Form'
 import { HStack } from './lib/elements/HStack'
 import { Input } from './lib/elements/Input'
 import { Text } from './lib/elements/Text'
-import { Title } from './lib/elements/Title'
 import { VStack } from './lib/elements/VStack'
 import { state } from './lib/state'
 
