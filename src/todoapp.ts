@@ -1,5 +1,7 @@
 import { Element } from "./lib//elements/Element";
+import { Box } from "./lib/elements/Box";
 import { Button } from "./lib/elements/Button";
+import { Form } from "./lib/elements/Form";
 import { Input } from "./lib/elements/Input";
 import { Text } from "./lib/elements/Text";
 import { Title } from "./lib/elements/Title";
@@ -61,7 +63,6 @@ const UserTodosScreen = () => {
   };
 
   return VStack()
-    .align("flex-start")
     .child(
       Title(() => `Welcome back ${userStore.user!.username}`, 1, userStore)
     )
@@ -75,18 +76,17 @@ const TodoForm = (
   onSubmit: (event: SubmitEvent) => void,
   initialValue = ""
 ) => {
-  return Element("form")
+  return Form(onSubmit)
     .child(
       Element("input")
         .attribute("value", initialValue)
         .attribute("placeholder", "Your todo...")
     )
-    .child(Element("button").attribute("type", "submit").child("Create"))
-    .listen("submit", onSubmit);
+    .child(Button("Create").submit());
 };
 
 const TodosList = (state: TodoState) => {
-  return Element("div", state).forEachChild(
+  return Box(state).forEachChild(
     () => state.todos,
     (todo, index) => TodoItem(todo, index, state)
   );
@@ -109,16 +109,16 @@ const TodoItem = (todo: Todo, index: number, todoState: TodoState) => {
     todoState.todos = todoState.todos.filter((_, i) => i !== index);
   };
 
-  return Element("div", isEditModeEnabledState)
+  return VStack(isEditModeEnabledState)
     .child(() =>
       isEditModeEnabledState.isEditMode
         ? TodoForm(onTodoUpdate, todo.description).child(
-            Element("button").listen("click", toggleEditMode).child("Cancel")
+            Button("Cancel", toggleEditMode)
           )
-        : Element("div").child(() => `${todo.description}`)
+        : Text(() => `${todo.description}`)
     )
-    .child(Element("button").listen("click", toggleEditMode).child("Edit"))
-    .child(Element("button").listen("click", onTodoDelete).child("Delete"));
+    .child(Button("Edit", toggleEditMode))
+    .child(Button("Delete", onTodoDelete));
 };
 
 export const App = () => {

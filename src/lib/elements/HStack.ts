@@ -8,7 +8,7 @@ export class HStackNode<S extends StateValue = StateValue> extends FlexNode<S> {
 
     this.direction("row");
     this.justify("flex-start");
-    // this.align("stretch");
+    this.align("flex-start");
   }
 }
 

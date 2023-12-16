@@ -20,6 +20,12 @@ export class ButtonNode<S extends StateValue = StateValue> extends ElementNode<
       this.listen("click", onClick);
     }
   }
+
+  submit() {
+    this.attribute("type", "submit");
+
+    return this;
+  }
 }
 
 export const Button = createNodeFunction<typeof ButtonNode, ButtonNode>(

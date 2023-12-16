@@ -190,10 +190,14 @@ function patchTree(prev: Element | ChildNode, node: ElementNode | Child) {
   const u = unwrap(node);
 
   if (!ElementNode.is(u)) {
-    const newClone = document.createTextNode(`${node}`);
+    if (!node) {
+      prev.remove();
+    } else {
+      const newClone = document.createTextNode(`${node}`);
 
-    if (!prev.isEqualNode(newClone)) {
-      prev.replaceWith(newClone);
+      if (!prev.isEqualNode(newClone)) {
+        prev.replaceWith(newClone);
+      }
     }
   }
 

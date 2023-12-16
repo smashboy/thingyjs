@@ -7,8 +7,8 @@ export class VStackNode<S extends StateValue = StateValue> extends FlexNode<S> {
     super(state);
 
     this.direction("column");
-    this.justify("center");
-    this.align("stretch");
+    this.justify("flex-start");
+    this.align("flex-start");
   }
 }
 

@@ -13,22 +13,22 @@ const myState = state({ counter: 0 });
 const app = VStack()
   .child(Title(() => `Count: ${myState.counter}`, 1, myState))
   .child(Title(() => `Another count: ${myState.counter * 2}`, 1, myState))
-  .child(Box(myState).child(() => (myState.counter % 2 === 0 ? "Test" : null)))
   .child(
     HStack()
       .child(
-        Button("+", () => (myState.counter += 1000)).styles({
+        Button("+", () => (myState.counter += 1)).styles({
           backgroundColor: "green",
         })
       )
       .child(
         Button("-", () => {
           if (myState.counter > 0) {
-            myState.counter -= 1000;
+            myState.counter -= 1;
           }
         }).styles({ backgroundColor: "red" })
       )
   )
+  .child(Box(myState).child(() => (myState.counter % 2 === 0 ? "Test" : null)))
   .child(
     Box(myState)
       .styles(() => ({
