@@ -2,6 +2,7 @@ import { Element } from './lib//elements/Element'
 import { Box } from './lib/elements/Box'
 import { Button } from './lib/elements/Button'
 import { Form } from './lib/elements/Form'
+import { HStack } from './lib/elements/HStack'
 import { Input } from './lib/elements/Input'
 import { Text } from './lib/elements/Text'
 import { Title } from './lib/elements/Title'
@@ -43,8 +44,15 @@ const WelcomeScreen = () => {
       width: '100%',
       height: '100%'
     })
-    .child(Input(onInputChange))
-    .child(Button('Sign in', signin))
+    .child(
+      Form(signin).child(
+        VStack()
+          .gap('10px')
+          .align('center')
+          .child(Input(onInputChange))
+          .child(Button('Sign in').submit())
+      )
+    )
 }
 
 const UserTodosScreen = () => {
@@ -117,8 +125,12 @@ const TodoItem = (todo: Todo, index: number, todoState: TodoState) => {
           )
         : Text(() => `${todo.description}`)
     )
-    .child(Button('Edit', toggleEditMode))
-    .child(Button('Delete', onTodoDelete))
+    .child(
+      HStack()
+        .gap('5px')
+        .child(Button('Edit', toggleEditMode))
+        .child(Button('Delete', onTodoDelete))
+    )
 }
 
 export const App = () => {

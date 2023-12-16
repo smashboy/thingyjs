@@ -16,14 +16,14 @@ const app = VStack()
   .child(
     HStack()
       .child(
-        Button('+', () => (myState.counter += 1)).styles({
+        Button('+', () => (myState.counter += 1000)).styles({
           backgroundColor: 'green'
         })
       )
       .child(
         Button('-', () => {
           if (myState.counter > 0) {
-            myState.counter -= 1
+            myState.counter -= 1000
           }
         }).styles({ backgroundColor: 'red' })
       )

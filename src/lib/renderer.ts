@@ -193,10 +193,10 @@ function patchTree(prev: Element | ChildNode, node: ElementNode | Child) {
     if (!node) {
       prev.remove()
     } else {
-      const newClone = document.createTextNode(`${node}`)
+      const newTextContent = `${node}`
 
-      if (!prev.isEqualNode(newClone)) {
-        prev.replaceWith(newClone)
+      if (prev.textContent !== newTextContent) {
+        prev.textContent = newTextContent
       }
     }
   }
@@ -217,13 +217,12 @@ function patchTree(prev: Element | ChildNode, node: ElementNode | Child) {
           resetAttributes: true,
           withoutChildren: true
         })
+      } else {
+        const newClone = createHTMLElement(data)()
+        prev.replaceWith(newClone)
+
+        return () => newClone
       }
-
-      const newClone = createHTMLElement(data)()
-
-      prev.replaceWith(newClone)
-
-      return () => newClone
     }
 
     let newChildCount = 0
