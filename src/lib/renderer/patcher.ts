@@ -1,12 +1,6 @@
 import { Child, ElementNode } from '../elements/Element'
 import { unwrap } from '../utils'
-import {
-  appendChild,
-  appendChildren,
-  appendNodeData,
-  createHTMLElement
-} from './element'
-import { clearListeners, initListeners } from './listeners'
+import { appendChild, appendNodeData, createHTMLElement } from './element'
 
 export function patchTree(
   prev: Element | ChildNode,
