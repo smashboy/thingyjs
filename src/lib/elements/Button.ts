@@ -1,34 +1,34 @@
-import { StateValue } from "../state";
-import { createNodeFunction } from "../utils";
-import { ElementNode } from "./Element";
-import { Text, TextNode } from "./Text";
+import { StateValue } from '../state'
+import { createNodeFunction } from '../utils'
+import { ElementNode } from './Element'
+import { Text, TextNode } from './Text'
 
 export class ButtonNode<S extends StateValue = StateValue> extends ElementNode<
-  "button",
+  'button',
   S
 > {
   constructor(
     label: TextNode | string,
-    onClick?: (event: HTMLElementEventMap["click"]) => void,
+    onClick?: (event: HTMLElementEventMap['click']) => void,
     state?: S
   ) {
-    super("button", state);
+    super('button', state)
 
-    this.child(typeof label === "string" ? Text(label) : label);
+    this.child(typeof label === 'string' ? Text(label) : label)
 
     if (onClick) {
-      this.listen("click", onClick);
+      this.listen('click', onClick)
     }
   }
 
   submit() {
-    this.attribute("type", "submit");
+    this.attribute('type', 'submit')
 
-    return this;
+    return this
   }
 }
 
 export const Button = createNodeFunction<typeof ButtonNode, ButtonNode>(
   // @ts-ignore
   ButtonNode
-);
+)

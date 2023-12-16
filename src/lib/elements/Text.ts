@@ -1,46 +1,46 @@
-import * as CSS from "csstype";
-import { StateValue } from "../state";
-import { ElementNode, NodeReactivePropery } from "./Element";
-import { createNodeFunction } from "../utils";
+import * as CSS from 'csstype'
+import { StateValue } from '../state'
+import { ElementNode, NodeReactivePropery } from './Element'
+import { createNodeFunction } from '../utils'
 
 export class TextNode<S extends StateValue = StateValue> extends ElementNode<
-  "div",
+  'div',
   S
 > {
   constructor(text: NodeReactivePropery<string>, state?: S) {
-    super("div", state);
+    super('div', state)
 
-    this.child(text);
+    this.child(text)
   }
 
   size(size: NodeReactivePropery<CSS.Property.FontSize>) {
-    if (typeof size === "function") {
+    if (typeof size === 'function') {
       this.styles(() => ({
-        fontSize: size(),
-      }));
+        fontSize: size()
+      }))
     } else {
       this.styles({
-        fontSize: size,
-      });
+        fontSize: size
+      })
     }
 
-    return this;
+    return this
   }
 
   weight(weight: CSS.Property.FontWeight) {
-    this.styles({ fontWeight: weight });
+    this.styles({ fontWeight: weight })
 
-    return this;
+    return this
   }
 
   italic() {
-    return this;
+    return this
   }
 
   truncate() {
-    return this;
+    return this
   }
 }
 
 // @ts-ignore
-export const Text = createNodeFunction<typeof TextNode, TextNode>(TextNode);
+export const Text = createNodeFunction<typeof TextNode, TextNode>(TextNode)

@@ -1,90 +1,90 @@
-import * as CSS from "csstype";
-import { StateValue } from "../state";
-import { ElementNode, NodeReactivePropery } from "./Element";
-import { createNodeFunction } from "../utils";
+import * as CSS from 'csstype'
+import { StateValue } from '../state'
+import { ElementNode, NodeReactivePropery } from './Element'
+import { createNodeFunction } from '../utils'
 
 export class FlexNode<S extends StateValue = StateValue> extends ElementNode<
-  "div",
+  'div',
   S
 > {
   constructor(state?: S) {
-    super("div", state);
+    super('div', state)
 
     this.styles({
-      display: "flex",
-    });
+      display: 'flex'
+    })
   }
 
   justify(prop: NodeReactivePropery<CSS.Property.JustifyContent>) {
-    if (typeof prop === "function") {
+    if (typeof prop === 'function') {
       this.styles(() => ({
-        justifyContent: prop(),
-      }));
+        justifyContent: prop()
+      }))
     } else {
       this.styles({
-        justifyContent: prop,
-      });
+        justifyContent: prop
+      })
     }
 
-    return this;
+    return this
   }
 
   align(prop: NodeReactivePropery<CSS.Property.AlignItems>) {
-    if (typeof prop === "function") {
+    if (typeof prop === 'function') {
       this.styles(() => ({
-        alignItems: prop(),
-      }));
+        alignItems: prop()
+      }))
     } else {
       this.styles({
-        alignItems: prop,
-      });
+        alignItems: prop
+      })
     }
 
-    return this;
+    return this
   }
 
   direction(prop: NodeReactivePropery<CSS.Property.FlexDirection>) {
-    if (typeof prop === "function") {
+    if (typeof prop === 'function') {
       this.styles(() => ({
-        flexDirection: prop(),
-      }));
+        flexDirection: prop()
+      }))
     } else {
       this.styles({
-        flexDirection: prop,
-      });
+        flexDirection: prop
+      })
     }
 
-    return this;
+    return this
   }
 
   wrap(prop: NodeReactivePropery<CSS.Property.FlexWrap>) {
-    if (typeof prop === "function") {
+    if (typeof prop === 'function') {
       this.styles(() => ({
-        flexWrap: prop(),
-      }));
+        flexWrap: prop()
+      }))
     } else {
       this.styles({
-        flexWrap: prop,
-      });
+        flexWrap: prop
+      })
     }
 
-    return this;
+    return this
   }
 
   gap(prop: NodeReactivePropery<CSS.Property.Gap>) {
-    if (typeof prop === "function") {
+    if (typeof prop === 'function') {
       this.styles(() => ({
-        gap: prop(),
-      }));
+        gap: prop()
+      }))
     } else {
       this.styles({
-        gap: prop,
-      });
+        gap: prop
+      })
     }
 
-    return this;
+    return this
   }
 }
 
 // @ts-ignore
-export const Flex = createNodeFunction<typeof FlexNode, FlexNode>(FlexNode);
+export const Flex = createNodeFunction<typeof FlexNode, FlexNode>(FlexNode)

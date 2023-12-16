@@ -1,14 +1,14 @@
-import { Box } from "./lib/elements/Box";
-import { Button } from "./lib/elements/Button";
-import { Element } from "./lib/elements/Element";
-import { HStack } from "./lib/elements/HStack";
-import { Title } from "./lib/elements/Title";
-import { VStack } from "./lib/elements/VStack";
-import render from "./lib/renderer";
-import { state } from "./lib/state";
-import "./style.css";
+import { Box } from './lib/elements/Box'
+import { Button } from './lib/elements/Button'
+import { Element } from './lib/elements/Element'
+import { HStack } from './lib/elements/HStack'
+import { Title } from './lib/elements/Title'
+import { VStack } from './lib/elements/VStack'
+import render from './lib/renderer'
+import { state } from './lib/state'
+import './style.css'
 
-const myState = state({ counter: 0 });
+const myState = state({ counter: 0 })
 
 const app = VStack()
   .child(Title(() => `Count: ${myState.counter}`, 1, myState))
@@ -16,37 +16,37 @@ const app = VStack()
   .child(
     HStack()
       .child(
-        Button("+", () => (myState.counter += 1)).styles({
-          backgroundColor: "green",
+        Button('+', () => (myState.counter += 1)).styles({
+          backgroundColor: 'green'
         })
       )
       .child(
-        Button("-", () => {
+        Button('-', () => {
           if (myState.counter > 0) {
-            myState.counter -= 1;
+            myState.counter -= 1
           }
-        }).styles({ backgroundColor: "red" })
+        }).styles({ backgroundColor: 'red' })
       )
   )
-  .child(Box(myState).child(() => (myState.counter % 2 === 0 ? "Test" : null)))
+  .child(Box(myState).child(() => (myState.counter % 2 === 0 ? 'Test' : null)))
   .child(
     Box(myState)
       .styles(() => ({
-        width: "100px",
-        height: "100px",
+        width: '100px',
+        height: '100px',
         backgroundColor:
-          Number(myState.counter.toString().split("")[0]) % 2 === 0
-            ? "green"
-            : "red",
-        margin: "10px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+          Number(myState.counter.toString().split('')[0]) % 2 === 0
+            ? 'green'
+            : 'red',
+        margin: '10px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
       }))
       .child(() => `${myState.counter}`)
   )
   .child(
-    Element("ul", myState)
+    Element('ul', myState)
       // .forEachChild(
       //   () => Array.from({ length: myState.counter }).fill("Item") as string[],
       //   (item, index) =>
@@ -55,18 +55,20 @@ const app = VStack()
       //       .child(`${item}: ${index + 1}`)
       // )
       .forEachChild(
-        () => Array.from({ length: myState.counter }).fill("Item") as string[],
+        () => Array.from({ length: myState.counter }).fill('Item') as string[],
         (item, index) =>
-          Element("li")
-            .styles({ backgroundColor: index % 2 === 0 ? "green" : "red" })
+          Element('li')
+            .styles({
+              backgroundColor: index % 2 === 0 ? 'green' : 'red'
+            })
             .child(`${item}: ${index + 1}`)
       )
-      .child(Element("li", myState).child(() => `Total: ${myState.counter}`))
+      .child(Element('li', myState).child(() => `Total: ${myState.counter}`))
       .child(
-        Element("li", myState).child(
+        Element('li', myState).child(
           () => `Yet another total: ${myState.counter}`
         )
       )
-  );
+  )
 
-render(document.getElementById("app")!, app);
+render(document.getElementById('app')!, app)

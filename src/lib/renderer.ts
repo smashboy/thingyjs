@@ -3,23 +3,23 @@ import {
   ChildLoop,
   ElementNode,
   ElementNodeData,
-  ReactiveChild,
-} from "./elements/Element";
-import { STATE_BIND_KEY, StateValue } from "./state";
-import { unwrap } from "./utils";
+  ReactiveChild
+} from './elements/Element'
+import { STATE_BIND_KEY, StateValue } from './state'
+import { unwrap } from './utils'
 
 export class Renderer {
-  private element!: () => HTMLElement;
-  private nodeRef: ElementNode;
-  private readonly stateRef: StateValue | void = void 0;
+  private element!: () => HTMLElement
+  private nodeRef: ElementNode
+  private readonly stateRef: StateValue | void = void 0
 
   constructor(node: ElementNode, state?: StateValue) {
-    this.nodeRef = node;
-    this.stateRef = state;
+    this.nodeRef = node
+    this.stateRef = state
 
-    this.onStateUpdate = this.onStateUpdate.bind(this);
+    this.onStateUpdate = this.onStateUpdate.bind(this)
 
-    this.bindState();
+    this.bindState()
   }
 
   private bindState() {
@@ -27,49 +27,49 @@ export class Renderer {
       this.stateRef[STATE_BIND_KEY](
         this.nodeRef._getNode().nodeId,
         this.onStateUpdate
-      );
+      )
     }
   }
 
   private onStateUpdate() {
-    this.updateHTMLElement();
+    this.updateHTMLElement()
   }
 
   private updateHTMLElement() {
-    this.element = patchTree(this.element(), this.nodeRef);
+    this.element = patchTree(this.element(), this.nodeRef)
   }
 
   _getElement() {
-    return this.element();
+    return this.element()
   }
 
   _initRender() {
-    this.element = createHTMLElement(this.nodeRef._getNode());
-    return this.element();
+    this.element = createHTMLElement(this.nodeRef._getNode())
+    return this.element()
   }
 }
 
 export default function render(root: HTMLElement, app: ElementNode) {
   if (!root) {
-    throw new Error("Please provide a valid entry for your application");
+    throw new Error('Please provide a valid entry for your application')
   }
 
-  root.appendChild(app._getRenderer()._initRender());
+  root.appendChild(app._getRenderer()._initRender())
 }
 
 interface CreateHTMLOptions {
-  resetListeners?: boolean;
-  resetAttributes?: boolean;
-  withoutListeners?: boolean;
-  withoutChildren?: boolean;
+  resetListeners?: boolean
+  resetAttributes?: boolean
+  withoutListeners?: boolean
+  withoutChildren?: boolean
 }
 
 function createHTMLElement(node: ElementNodeData, options?: CreateHTMLOptions) {
-  const element = document.createElement(node.tag);
+  const element = document.createElement(node.tag)
 
-  appendNodeData(element, node, options);
+  appendNodeData(element, node, options)
 
-  return () => element;
+  return () => element
 }
 
 function appendNodeData(
@@ -81,34 +81,34 @@ function appendNodeData(
     resetListeners = false,
     withoutListeners = false,
     withoutChildren = false,
-    resetAttributes = false,
-  } = options || {};
+    resetAttributes = false
+  } = options || {}
 
   if (resetAttributes) {
-    clearAttributes(element);
+    clearAttributes(element)
   }
 
-  appendAttributes(element, node);
-  appendStyles(element, node);
+  appendAttributes(element, node)
+  appendStyles(element, node)
 
   if (resetListeners) {
-    clearListeners(element, node);
+    clearListeners(element, node)
   }
 
   if (!withoutListeners) {
-    initListeners(element, node);
+    initListeners(element, node)
   }
 
   if (!withoutChildren) {
-    appendChildren(element, node);
+    appendChildren(element, node)
   }
 }
 
 function initListeners(element: HTMLElement, node: ElementNodeData) {
   for (const key in node.listeners) {
     if (Object.prototype.hasOwnProperty.call(node.listeners, key)) {
-      const listener = node.listeners[key];
-      element.addEventListener(key, listener.callback, listener.options);
+      const listener = node.listeners[key]
+      element.addEventListener(key, listener.callback, listener.options)
     }
   }
 }
@@ -116,20 +116,20 @@ function initListeners(element: HTMLElement, node: ElementNodeData) {
 function clearListeners(element: HTMLElement, node: ElementNodeData) {
   for (const key in node.listeners) {
     if (Object.prototype.hasOwnProperty.call(node.listeners, key)) {
-      const listener = node.listeners[key];
-      element.removeEventListener(key, listener.callback, listener.options);
+      const listener = node.listeners[key]
+      element.removeEventListener(key, listener.callback, listener.options)
     }
   }
 }
 
 function appendStyles(element: HTMLElement, node: ElementNodeData) {
   for (let s of node.style) {
-    s = unwrap(s);
+    s = unwrap(s)
 
     for (const key in s) {
       if (Object.prototype.hasOwnProperty.call(s, key)) {
-        const property = s[key];
-        element.style[key] = property!;
+        const property = s[key]
+        element.style[key] = property!
       }
     }
   }
@@ -138,141 +138,141 @@ function appendStyles(element: HTMLElement, node: ElementNodeData) {
 function appendAttributes(element: HTMLElement, node: ElementNodeData) {
   for (const key in node.attributes) {
     if (Object.prototype.hasOwnProperty.call(node.attributes, key)) {
-      const value = node.attributes[key];
-      element.setAttribute(key, value!);
+      const value = node.attributes[key]
+      element.setAttribute(key, value!)
     }
   }
 }
 
 function clearAttributes(element: HTMLElement) {
   for (const attr of element.attributes) {
-    element.removeAttribute(attr.name);
+    element.removeAttribute(attr.name)
   }
 }
 
 function appendChild(element: HTMLElement, child: ReactiveChild) {
-  if (child === null || child === undefined) return;
+  if (child === null || child === undefined) return
 
-  child = unwrap(child);
+  child = unwrap(child)
 
   // @ts-ignore
   if (ElementNode.isChildLoop(child)) {
-    let { array, callback } = child as ChildLoop<any>;
+    let { array, callback } = child as ChildLoop<any>
 
-    array = unwrap(array);
+    array = unwrap(array)
 
     for (let index = 0; index < array.length; index++) {
-      const item = array[index];
+      const item = array[index]
 
-      appendChild(element, callback(item, index, array));
+      appendChild(element, callback(item, index, array))
     }
 
-    return;
+    return
   }
 
   if (ElementNode.is(child)) {
-    element.appendChild(child._getRenderer()._initRender());
-    return;
+    element.appendChild(child._getRenderer()._initRender())
+    return
   }
 
-  element.appendChild(document.createTextNode(`${child}`));
+  element.appendChild(document.createTextNode(`${child}`))
 }
 
 function appendChildren(element: HTMLElement, node: ElementNodeData) {
   for (const key in node.children) {
     if (Object.prototype.hasOwnProperty.call(node.children, key)) {
-      appendChild(element, node.children[key]);
+      appendChild(element, node.children[key])
     }
   }
 }
 
 function patchTree(prev: Element | ChildNode, node: ElementNode | Child) {
-  const u = unwrap(node);
+  const u = unwrap(node)
 
   if (!ElementNode.is(u)) {
     if (!node) {
-      prev.remove();
+      prev.remove()
     } else {
-      const newClone = document.createTextNode(`${node}`);
+      const newClone = document.createTextNode(`${node}`)
 
       if (!prev.isEqualNode(newClone)) {
-        prev.replaceWith(newClone);
+        prev.replaceWith(newClone)
       }
     }
   }
 
   if (ElementNode.is(u)) {
-    const prevCloneWithoutChildren = prev.cloneNode(false);
-    const data = u._getNode();
+    const prevCloneWithoutChildren = prev.cloneNode(false)
+    const data = u._getNode()
 
     const newCloneWithoutChildren = createHTMLElement(data, {
       withoutChildren: true,
-      withoutListeners: true,
-    })();
+      withoutListeners: true
+    })()
 
     if (!prevCloneWithoutChildren.isEqualNode(newCloneWithoutChildren)) {
       if (prev.nodeName === newCloneWithoutChildren.nodeName) {
         appendNodeData(prev as HTMLElement, data, {
           resetListeners: true,
           resetAttributes: true,
-          withoutChildren: true,
-        });
+          withoutChildren: true
+        })
       }
 
-      const newClone = createHTMLElement(data)();
+      const newClone = createHTMLElement(data)()
 
-      prev.replaceWith(newClone);
+      prev.replaceWith(newClone)
 
-      return () => newClone;
+      return () => newClone
     }
 
-    let newChildCount = 0;
+    let newChildCount = 0
 
     for (let i = 0; i < data.children.length; i++) {
-      const child = unwrap(data.children[i]);
+      const child = unwrap(data.children[i])
 
       if (ElementNode.isChildLoop(child)) {
-        let { array, callback } = child;
+        let { array, callback } = child
 
-        array = unwrap(array);
+        array = unwrap(array)
 
         for (let j = 0; j < array.length; j++) {
-          newChildCount++;
-          const child = callback(array[j], j, array);
-          const prevHTMLChild = prev.childNodes[i + j];
+          newChildCount++
+          const child = callback(array[j], j, array)
+          const prevHTMLChild = prev.childNodes[i + j]
 
           if (prevHTMLChild) {
-            patchTree(prevHTMLChild, child);
-            continue;
+            patchTree(prevHTMLChild, child)
+            continue
           }
 
-          appendChild(prev, child);
+          appendChild(prev, child)
         }
 
-        continue;
+        continue
       }
 
-      newChildCount++;
+      newChildCount++
 
-      const prevHTMLChild = prev.childNodes[newChildCount - 1];
+      const prevHTMLChild = prev.childNodes[newChildCount - 1]
 
       if (prevHTMLChild) {
-        patchTree(prevHTMLChild, child);
-        continue;
+        patchTree(prevHTMLChild, child)
+        continue
       }
 
-      appendChild(prev, child);
+      appendChild(prev, child)
     }
 
     if (prev.childNodes.length > newChildCount) {
-      const start = prev.childNodes.length;
+      const start = prev.childNodes.length
       for (let index = start; index > newChildCount - 1; index--) {
-        prev.childNodes[index]?.remove();
+        prev.childNodes[index]?.remove()
       }
     }
   }
 
-  return () => prev;
+  return () => prev
 }
 
 // if (!prevCloneWithoutChildren.isEqualNode(newCloneWithoutChildren)) {

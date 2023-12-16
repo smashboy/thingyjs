@@ -1,47 +1,47 @@
-import { ElementNode, NodeReactivePropery } from "./elements/Element";
+import { ElementNode, NodeReactivePropery } from './elements/Element'
 
 export function isProxy(obj: any) {
   try {
     // @ts-ignore
-    postMessage(obj, window);
+    postMessage(obj, window)
   } catch (error) {
     // @ts-ignore
-    return error?.code === 25;
+    return error?.code === 25
   }
 
-  return false;
+  return false
 }
 
 export function resetObject<T extends object>(obj: T) {
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      delete obj[key];
+      delete obj[key]
     }
   }
 }
 
 export function getSetDiff<T>(a: Set<T>, b: Set<T>) {
-  const diff = new Set<T>();
+  const diff = new Set<T>()
 
   for (const value of a.values()) {
     if (!b.has(value)) {
-      diff.add(value);
+      diff.add(value)
     }
   }
 
-  return diff;
+  return diff
 }
 
 export function transfer<T>(a: T[], b: T[]) {
   for (let index = 0; index < a.length; index++) {
-    b[index] = a[index];
+    b[index] = a[index]
   }
 
-  a.splice(0, a.length);
+  a.splice(0, a.length)
 }
 
 export function unwrap<T>(value: NodeReactivePropery<T>) {
-  return typeof value === "function" ? (value as () => T)() : value;
+  return typeof value === 'function' ? (value as () => T)() : value
 }
 
 export function createNodeFunction<
@@ -49,5 +49,5 @@ export function createNodeFunction<
   I extends ElementNode
 >(Node: ConstructorParameters<C>) {
   // @ts-ignore
-  return (...args: ConstructorParameters<C>) => new Node(...args) as I;
+  return (...args: ConstructorParameters<C>) => new Node(...args) as I
 }

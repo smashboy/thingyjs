@@ -1,19 +1,19 @@
-import { StateValue } from "../state";
-import { createNodeFunction } from "../utils";
-import { ElementNode } from "./Element";
+import { StateValue } from '../state'
+import { createNodeFunction } from '../utils'
+import { ElementNode } from './Element'
 
 export class InputNode<S extends StateValue = StateValue> extends ElementNode<
-  "input",
+  'input',
   S
 > {
   constructor(
-    onChange?: (event: HTMLElementEventMap["input"]) => void,
+    onChange?: (event: HTMLElementEventMap['input']) => void,
     state?: S
   ) {
-    super("input", state);
+    super('input', state)
 
     if (onChange) {
-      this.listen("input", onChange);
+      this.listen('input', onChange)
     }
   }
 }
@@ -21,4 +21,4 @@ export class InputNode<S extends StateValue = StateValue> extends ElementNode<
 export const Input = createNodeFunction<typeof InputNode, InputNode>(
   // @ts-ignore
   InputNode
-);
+)
