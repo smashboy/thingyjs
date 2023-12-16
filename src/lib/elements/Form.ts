@@ -1,13 +1,9 @@
-import { StateValue } from '../state'
 import { createNodeFunction } from '../utils'
 import { ElementNode } from './Element'
 
-export class FormNode<S extends StateValue = StateValue> extends ElementNode<
-  'form',
-  S
-> {
-  constructor(onSubmit: (event: SubmitEvent) => void, state?: S) {
-    super('form', state)
+export class FormNode extends ElementNode<'form'> {
+  constructor(onSubmit: (event: SubmitEvent) => void) {
+    super('form')
 
     this.listen('submit', (event: SubmitEvent) => {
       event.preventDefault()

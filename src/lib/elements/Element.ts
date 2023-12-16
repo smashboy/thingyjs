@@ -1,7 +1,5 @@
 import * as CSS from 'csstype'
-import { IS_STATE_KEY, StateValue } from '../state'
 import { createNodeFunction } from '../utils'
-import { Renderer } from '../renderer/renderer'
 
 export type NodeReactivePropery<T> = (() => T) | T
 
@@ -12,7 +10,7 @@ export type ChildLoop<T> = {
 
 export type Child =
   | ElementNode
-  | ChildLoop<any>
+  // | ChildLoop<any>
   | string
   | number
   | boolean
@@ -40,8 +38,7 @@ export const IS_CHILD_LOOP_KEY = Symbol('_isChildLoop')
 export type ElementNodeData = ReturnType<ElementNode['_getNode']>
 
 export class ElementNode<
-  N extends keyof HTMLElementTagNameMap = keyof HTMLElementTagNameMap,
-  S extends StateValue = StateValue
+  N extends keyof HTMLElementTagNameMap = keyof HTMLElementTagNameMap
 > {
   private readonly nodeId: number
 
@@ -52,16 +49,13 @@ export class ElementNode<
   private readonly listeners: ElementNodeListeners = {}
   private readonly attributes: ElementNodeAttributes = {}
 
-  private readonly renderer: Renderer
-
-  constructor(tag: N, state?: S) {
-    if (state && !state[IS_STATE_KEY]) {
-      throw new Error('Please provide a valid state')
-    }
+  constructor(tag: N) {
+    // if (state && !state[IS_STATE_KEY]) {
+    //   throw new Error('Please provide a valid state')
+    // }
 
     this.tag = tag
     this.nodeId = globalNodeId
-    this.renderer = new Renderer(this, state)
 
     globalNodeId++
   }
@@ -92,26 +86,26 @@ export class ElementNode<
     return this
   }
 
-  forEachChild<T>(
-    array: NodeReactivePropery<T[]>,
-    callback: (value: T, index: number) => Child
-  ) {
-    const childLoop: ChildLoop<T> = {
-      array,
-      callback
-    }
+  // forEachChild<T>(
+  //   array: NodeReactivePropery<T[]>,
+  //   callback: (value: T, index: number) => Child
+  // ) {
+  //   const childLoop: ChildLoop<T> = {
+  //     array,
+  //     callback
+  //   }
 
-    Object.defineProperty(childLoop, IS_CHILD_LOOP_KEY, {
-      configurable: false,
-      writable: false,
-      enumerable: false,
-      value: true
-    })
+  //   Object.defineProperty(childLoop, IS_CHILD_LOOP_KEY, {
+  //     configurable: false,
+  //     writable: false,
+  //     enumerable: false,
+  //     value: true
+  //   })
 
-    this._children.push(childLoop)
+  //   this._children.push(childLoop)
 
-    return this
-  }
+  //   return this
+  // }
 
   _getNode() {
     const { tag, nodeId, style, attributes, listeners } = this
@@ -124,10 +118,6 @@ export class ElementNode<
       listeners,
       children: this._children
     }
-  }
-
-  _getRenderer() {
-    return this.renderer
   }
 
   static is(value: unknown): value is ElementNode {

@@ -26,7 +26,7 @@ export function patchTree(
     const newCloneWithoutChildren = createHTMLElement(data, {
       withoutChildren: true,
       withoutListeners: true
-    })()
+    })
 
     if (!prev.cloneNode(false).isEqualNode(newCloneWithoutChildren)) {
       if (prev.nodeName === newCloneWithoutChildren.nodeName) {
@@ -43,38 +43,14 @@ export function patchTree(
         })
         prev.replaceWith(newCloneWithoutChildren)
 
-        return () => newCloneWithoutChildren
+        return newCloneWithoutChildren
       }
     }
-
-    let newChildCount = 0
 
     for (let i = 0; i < data.children.length; i++) {
       const child = unwrap(data.children[i])
 
-      if (ElementNode.isChildLoop(child)) {
-        let { array, callback } = child
-
-        array = unwrap(array)
-
-        for (let j = 0; j < array.length; j++) {
-          const child = callback(array[j], j, array)
-          const prevHTMLChild = prev.childNodes[newChildCount]
-          newChildCount++
-
-          if (prevHTMLChild) {
-            patchTree(prevHTMLChild, child)
-            continue
-          }
-
-          appendChild(prev, child)
-        }
-
-        continue
-      }
-
-      const prevHTMLChild = prev.childNodes[newChildCount]
-      newChildCount++
+      const prevHTMLChild = prev.childNodes[i]
 
       if (prevHTMLChild) {
         patchTree(prevHTMLChild, child)
@@ -84,13 +60,13 @@ export function patchTree(
       appendChild(prev, child)
     }
 
-    if (prev.childNodes.length > newChildCount) {
+    if (prev.childNodes.length > data.children.length) {
       const start = prev.childNodes.length
-      for (let index = start; index > newChildCount - 1; index--) {
+      for (let index = start; index > data.children.length - 1; index--) {
         prev.childNodes[index]?.remove()
       }
     }
   }
 
-  return () => prev
+  return prev
 }

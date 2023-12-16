@@ -1,14 +1,10 @@
 import * as CSS from 'csstype'
-import { StateValue } from '../state'
 import { ElementNode, NodeReactivePropery } from './Element'
 import { createNodeFunction } from '../utils'
 
-export class FlexNode<S extends StateValue = StateValue> extends ElementNode<
-  'div',
-  S
-> {
-  constructor(state?: S) {
-    super('div', state)
+export class FlexNode extends ElementNode<'div'> {
+  constructor() {
+    super('div')
 
     this.styles({
       display: 'flex'

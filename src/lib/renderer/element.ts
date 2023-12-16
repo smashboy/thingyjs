@@ -27,7 +27,7 @@ export function createHTMLElement(
 
   appendNodeData(element, node, options)
 
-  return () => element
+  return element
 }
 
 export function appendNodeData(
@@ -101,7 +101,7 @@ export function appendChild(element: HTMLElement, child: ReactiveChild) {
   }
 
   if (ElementNode.is(child)) {
-    element.appendChild(child._getRenderer()._initRender())
+    element.appendChild(createHTMLElement(child._getNode()))
     return
   }
 

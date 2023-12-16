@@ -1,11 +1,10 @@
-import { Element } from './lib//elements/Element'
+import { Component } from './lib/Component'
 import { Box } from './lib/elements/Box'
 import { Button } from './lib/elements/Button'
+import { Element, ElementNode } from './lib/elements/Element'
 import { Form } from './lib/elements/Form'
 import { HStack } from './lib/elements/HStack'
-import { Input } from './lib/elements/Input'
 import { Text } from './lib/elements/Text'
-import { Title } from './lib/elements/Title'
 import { VStack } from './lib/elements/VStack'
 import { state } from './lib/state'
 
@@ -17,73 +16,34 @@ interface TodoState {
   todos: Todo[]
 }
 
-interface User {
-  username: string
-}
+class UserTodosScreen extends Component {
+  private readonly state = state<TodoState>({ todos: [] }, this)
 
-const userStore = state<{ user: User | null }>({ user: null })
-
-const WelcomeScreen = () => {
-  const loginStore = state({ username: '' })
-
-  const signin = () => {
-    if (loginStore.username) {
-      userStore.user = { username: loginStore.username }
-    }
-  }
-
-  const onInputChange = (event: Event) => {
-    loginStore.username = event.target.value
-  }
-
-  return VStack()
-    .gap('10px')
-    .align('center')
-    .justify('center')
-    .styles({
-      width: '100%',
-      height: '100%'
-    })
-    .child(
-      Form(signin).child(
-        VStack()
-          .gap('10px')
-          .align('center')
-          .child(Input(onInputChange))
-          .child(Button('Sign in').submit())
-      )
-    )
-}
-
-const UserTodosScreen = () => {
-  const todosStore = state<TodoState>({ todos: [] })
-
-  const logout = () => {
-    userStore.user = null
-  }
-
-  const onNewTodoCreate = (event: SubmitEvent) => {
+  onNewTodoCreate(event: SubmitEvent) {
     event.preventDefault()
     if (!event.target[0].value) return
 
-    todosStore.todos = [
-      ...todosStore.todos,
+    this.state.todos = [
+      ...this.state.todos,
       { description: event.target[0].value }
     ]
 
     event.target[0].value = ''
   }
 
-  return (
-    VStack()
-      // .child(
-      //   Title(() => `Welcome back ${userStore.user!.username}`, 1, userStore)
-      // )
-      .child(Button('Sign out', logout))
-      .child(Text(() => `Total todos: ${todosStore.todos.length}`, todosStore))
-      .child(TodoForm(onNewTodoCreate))
-      .child(TodosList(todosStore))
-  )
+  render(): ElementNode {
+    const list = Box()
+
+    for (let index = 0; index < this.state.todos.length; index++) {
+      const todo = this.state.todos[index]
+      list.child(new TodoItem({ todo, index, state: this.state }).render())
+    }
+
+    return VStack()
+      .child(Text(`Total todos: ${this.state.todos.length}`))
+      .child(TodoForm((e) => this.onNewTodoCreate(e)))
+      .child(list)
+  }
 }
 
 const TodoForm = (
@@ -100,57 +60,65 @@ const TodoForm = (
     .child(Button(buttonText).submit())
 }
 
-const TodosList = (state: TodoState) => {
-  return Box(state).forEachChild(
-    () => state.todos,
-    (todo, index) => TodoItem(todo, index, state)
-  )
+interface TodoItemProps {
+  todo: Todo
+  index: number
+  state: TodoState
 }
 
-const TodoItem = (todo: Todo, index: number, todoState: TodoState) => {
-  const isEditModeEnabledState = state({ isEditMode: false })
+class TodoItem extends Component<TodoItemProps> {
+  private readonly state = state({ isEditMode: false }, this)
 
-  const toggleEditMode = () => {
-    isEditModeEnabledState.isEditMode = !isEditModeEnabledState.isEditMode
+  constructor(props: TodoItemProps) {
+    super(props)
   }
 
-  const onTodoUpdate = (event: SubmitEvent) => {
+  toggleEditMode() {
+    this.state.isEditMode = !this.state.isEditMode
+  }
+
+  onTodoUpdate = (event: SubmitEvent) => {
     const updatedTodo = event.target[0].value
-    todoState.todos = todoState.todos.map((todo, i) =>
-      i === index ? { description: updatedTodo } : todo
+    this.props.state.todos = this.props.state.todos.map((todo, i) =>
+      i === this.props.index ? { description: updatedTodo } : todo
     )
   }
 
-  const onTodoDelete = () => {
-    todoState.todos = todoState.todos.filter((_, i) => i !== index)
-  }
+  render(): ElementNode {
+    const body = VStack()
 
-  return VStack(isEditModeEnabledState)
-    .child(() =>
-      isEditModeEnabledState.isEditMode
-        ? TodoForm(onTodoUpdate, 'Update', todo.description).child(
-            Button('Cancel', toggleEditMode)
-          )
-        : Text(() => `${todo.description}`)
-    )
-    .child(
+    if (this.state.isEditMode) {
+      body.child(
+        TodoForm(
+          (e) => this.onTodoUpdate(e),
+          'Update',
+          this.props.todo.description
+        )
+      )
+    }
+
+    body.child(
       HStack()
         .gap('5px')
         .child(
-          Button(
-            Text(() => `Edit ${todo.description}`, isEditModeEnabledState),
-            toggleEditMode
+          Button(Text(`Edit ${this.props.todo.description}`), () =>
+            this.toggleEditMode()
           )
         )
-        .child(Button('Delete', onTodoDelete))
+        .child(Button('Delete'))
     )
+
+    return body
+  }
 }
 
-export const App = () => {
-  return Element('div', userStore)
-    .styles({
-      width: '100dvw',
-      height: '100dvh'
-    })
-    .child(() => UserTodosScreen())
+export class TodoApp extends Component {
+  render(): ElementNode {
+    return Box()
+      .styles({
+        width: '100dvw',
+        height: '100dvh'
+      })
+      .child(new UserTodosScreen().render())
+  }
 }

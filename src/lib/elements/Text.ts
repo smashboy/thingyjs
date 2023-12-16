@@ -1,14 +1,10 @@
 import * as CSS from 'csstype'
-import { StateValue } from '../state'
 import { ElementNode, NodeReactivePropery } from './Element'
 import { createNodeFunction } from '../utils'
 
-export class TextNode<S extends StateValue = StateValue> extends ElementNode<
-  'div',
-  S
-> {
-  constructor(text: NodeReactivePropery<string>, state?: S) {
-    super('div', state)
+export class TextNode extends ElementNode<'div'> {
+  constructor(text: NodeReactivePropery<string>) {
+    super('div')
 
     this.child(text)
   }

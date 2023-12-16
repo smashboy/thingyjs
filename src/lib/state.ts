@@ -1,10 +1,13 @@
+import { Component } from './Component'
+import { ElementNode } from './elements/Element'
+
 export type StateValue = Record<string | symbol, any>
 
 export const IS_STATE_KEY = Symbol('_isState')
 export const STATE_BIND_KEY = Symbol('_bindState')
 export const STATE_GET_RAW_VALUE = Symbol('_getStateRawValue')
 
-export function state<T extends StateValue>(value: T) {
+export function state<T extends StateValue>(value: T, component: Component) {
   const nodes = new Map<number, () => void>()
 
   Object.defineProperty(value, IS_STATE_KEY, {
@@ -36,9 +39,7 @@ export function state<T extends StateValue>(value: T) {
       // @ts-ignore
       target[p] = newValue
 
-      for (const onUpdate of nodes.values()) {
-        onUpdate()
-      }
+      component._renderer.rerender()
 
       return true
     }

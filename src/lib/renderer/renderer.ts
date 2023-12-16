@@ -1,53 +1,37 @@
-import { ElementNode } from '../elements/Element'
+import { Component } from '../Component'
 import { createHTMLElement } from './element'
 import { patchTree } from './patcher'
-import { STATE_BIND_KEY, StateValue } from '../state'
 
 export class Renderer {
-  private element!: () => HTMLElement
-  private nodeRef: ElementNode
-  private readonly stateRef: StateValue | void = void 0
+  private element!: HTMLElement
+  private componentRef: Component
 
-  constructor(node: ElementNode, state?: StateValue) {
-    this.nodeRef = node
-    this.stateRef = state
-
-    this.onStateUpdate = this.onStateUpdate.bind(this)
-
-    this.bindState()
+  constructor(component: Component) {
+    this.componentRef = component
   }
 
-  private bindState() {
-    if (this.stateRef) {
-      this.stateRef[STATE_BIND_KEY](
-        this.nodeRef._getNode().nodeId,
-        this.onStateUpdate
-      )
-    }
-  }
-
-  private onStateUpdate() {
-    this.updateHTMLElement()
-  }
-
-  private updateHTMLElement() {
-    this.element = patchTree(this.element(), this.nodeRef)
-  }
-
-  _getElement() {
-    return this.element()
+  rerender() {
+    console.log(
+      'UPDATE',
+      this.element,
+      this.componentRef,
+      this.componentRef.render()
+    )
+    if (!this.element) return
+    this.element = patchTree(this.element, this.componentRef.render())
   }
 
   _initRender() {
-    this.element = createHTMLElement(this.nodeRef._getNode())
-    return this.element()
+    this.element = createHTMLElement(this.componentRef.render()._getNode())
+    console.log('INIT', this.element, this.componentRef)
+    return this.element
   }
 }
 
-export default function render(root: HTMLElement, app: ElementNode) {
+export default function render(root: HTMLElement, app: Component) {
   if (!root) {
     throw new Error('Please provide a valid entry for your application')
   }
 
-  root.appendChild(app._getRenderer()._initRender())
+  root.appendChild(app._renderer._initRender())
 }

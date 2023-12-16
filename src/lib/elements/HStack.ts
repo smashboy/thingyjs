@@ -1,10 +1,9 @@
-import { StateValue } from '../state'
 import { createNodeFunction } from '../utils'
 import { FlexNode } from './Flex'
 
-export class HStackNode<S extends StateValue = StateValue> extends FlexNode<S> {
-  constructor(state?: S) {
-    super(state)
+export class HStackNode extends FlexNode {
+  constructor() {
+    super()
 
     this.direction('row')
     this.justify('flex-start')

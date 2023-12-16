@@ -1,18 +1,13 @@
-import { StateValue } from '../state'
 import { createNodeFunction } from '../utils'
 import { ElementNode } from './Element'
 import { Text, TextNode } from './Text'
 
-export class ButtonNode<S extends StateValue = StateValue> extends ElementNode<
-  'button',
-  S
-> {
+export class ButtonNode extends ElementNode<'button'> {
   constructor(
     label: TextNode | string,
-    onClick?: (event: HTMLElementEventMap['click']) => void,
-    state?: S
+    onClick?: (event: HTMLElementEventMap['click']) => void
   ) {
-    super('button', state)
+    super('button')
 
     this.child(typeof label === 'string' ? Text(label) : label)
 
