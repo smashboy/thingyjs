@@ -64,24 +64,31 @@ const UserTodosScreen = () => {
 
   const onNewTodoCreate = (event: SubmitEvent) => {
     event.preventDefault()
+    if (!event.target[0].value) return
+
     todosStore.todos = [
       ...todosStore.todos,
       { description: event.target[0].value }
     ]
+
+    event.target[0].value = ''
   }
 
-  return VStack()
-    .child(
-      Title(() => `Welcome back ${userStore.user!.username}`, 1, userStore)
-    )
-    .child(Button('Sign out', logout))
-    .child(Text(() => `Total todos: ${todosStore.todos.length}`, todosStore))
-    .child(TodoForm(onNewTodoCreate))
-    .child(TodosList(todosStore))
+  return (
+    VStack()
+      // .child(
+      //   Title(() => `Welcome back ${userStore.user!.username}`, 1, userStore)
+      // )
+      .child(Button('Sign out', logout))
+      .child(Text(() => `Total todos: ${todosStore.todos.length}`, todosStore))
+      .child(TodoForm(onNewTodoCreate))
+      .child(TodosList(todosStore))
+  )
 }
 
 const TodoForm = (
   onSubmit: (event: SubmitEvent) => void,
+  buttonText = 'Create',
   initialValue = ''
 ) => {
   return Form(onSubmit)
@@ -90,7 +97,7 @@ const TodoForm = (
         .attribute('value', initialValue)
         .attribute('placeholder', 'Your todo...')
     )
-    .child(Button('Create').submit())
+    .child(Button(buttonText).submit())
 }
 
 const TodosList = (state: TodoState) => {
@@ -103,8 +110,9 @@ const TodosList = (state: TodoState) => {
 const TodoItem = (todo: Todo, index: number, todoState: TodoState) => {
   const isEditModeEnabledState = state({ isEditMode: false })
 
-  const toggleEditMode = () =>
-    (isEditModeEnabledState.isEditMode = !isEditModeEnabledState.isEditMode)
+  const toggleEditMode = () => {
+    isEditModeEnabledState.isEditMode = !isEditModeEnabledState.isEditMode
+  }
 
   const onTodoUpdate = (event: SubmitEvent) => {
     const updatedTodo = event.target[0].value
@@ -120,7 +128,7 @@ const TodoItem = (todo: Todo, index: number, todoState: TodoState) => {
   return VStack(isEditModeEnabledState)
     .child(() =>
       isEditModeEnabledState.isEditMode
-        ? TodoForm(onTodoUpdate, todo.description).child(
+        ? TodoForm(onTodoUpdate, 'Update', todo.description).child(
             Button('Cancel', toggleEditMode)
           )
         : Text(() => `${todo.description}`)
@@ -128,7 +136,12 @@ const TodoItem = (todo: Todo, index: number, todoState: TodoState) => {
     .child(
       HStack()
         .gap('5px')
-        .child(Button('Edit', toggleEditMode))
+        .child(
+          Button(
+            Text(() => `Edit ${todo.description}`, isEditModeEnabledState),
+            toggleEditMode
+          )
+        )
         .child(Button('Delete', onTodoDelete))
     )
 }
@@ -139,5 +152,5 @@ export const App = () => {
       width: '100dvw',
       height: '100dvh'
     })
-    .child(() => (userStore.user ? UserTodosScreen() : WelcomeScreen()))
+    .child(() => UserTodosScreen())
 }

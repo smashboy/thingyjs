@@ -12,6 +12,7 @@ import { appendStyles } from './styles'
 interface CreateHTMLOptions {
   resetListeners?: boolean
   resetAttributes?: boolean
+  resetStyles?: boolean
   withoutListeners?: boolean
   withoutChildren?: boolean
   withoutAttributes?: boolean
@@ -40,7 +41,8 @@ export function appendNodeData(
     withoutChildren = false,
     resetAttributes = false,
     withoutAttributes = false,
-    withoutStyles
+    withoutStyles = false,
+    resetStyles = false
   } = options || {}
 
   if (resetAttributes) {
@@ -49,6 +51,10 @@ export function appendNodeData(
 
   if (!withoutAttributes) {
     appendAttributes(element, node)
+  }
+
+  if (resetStyles) {
+    element.attributeStyleMap.clear()
   }
 
   if (!withoutStyles) {
