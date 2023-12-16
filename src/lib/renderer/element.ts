@@ -101,3 +101,43 @@ export function appendChild(element: HTMLElement, child: ReactiveChild) {
 
   element.appendChild(document.createTextNode(`${child}`))
 }
+
+export function isHTMLElementEqualToElementNode(
+  element: HTMLElement,
+  node: ElementNodeData
+) {
+  const isEqual = true
+
+  // if (node.style.length === 0 && element.attributeStyleMap('style')) return false
+
+  for (let s of node.style) {
+    s = unwrap(s)
+
+    for (const key in s) {
+      if (Object.prototype.hasOwnProperty.call(s, key)) {
+        const nodeProp = s[key]
+        const elProp = element.style[key]
+        if (nodeProp !== elProp) {
+          return false
+        }
+      }
+    }
+  }
+
+  if (
+    Object.keys(node.attributes).length + (node.style.length > 0 ? 1 : 0) !==
+    element.attributes.length
+  )
+    return false
+
+  for (const key in node.attributes) {
+    if (Object.prototype.hasOwnProperty.call(node.attributes, key)) {
+      const nodeAttr = node.attributes[key]
+      const elAttr = element.attributes.getNamedItem(key)
+      if (!elAttr) return false
+      if (nodeAttr !== elAttr.value) return false
+    }
+  }
+
+  return isEqual
+}

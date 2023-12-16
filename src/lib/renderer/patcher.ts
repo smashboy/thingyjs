@@ -1,6 +1,11 @@
 import { Child, ElementNode } from '../elements/Element'
 import { unwrap } from '../utils'
-import { appendChild, appendNodeData, createHTMLElement } from './element'
+import {
+  appendChild,
+  appendNodeData,
+  createHTMLElement,
+  isHTMLElementEqualToElementNode
+} from './element'
 
 export function patchTree(
   prev: Element | ChildNode,
@@ -21,7 +26,7 @@ export function patchTree(
   }
 
   if (ElementNode.is(u)) {
-    const prevCloneWithoutChildren = prev.cloneNode(false)
+    // const prevCloneWithoutChildren = prev.cloneNode(false)
     const data = u._getNode()
 
     const newCloneWithoutChildren = createHTMLElement(data, {
@@ -29,7 +34,11 @@ export function patchTree(
       withoutListeners: true
     })()
 
-    if (!prevCloneWithoutChildren.isEqualNode(newCloneWithoutChildren)) {
+    // const isHTMLEqual = prevCloneWithoutChildren.isEqualNode(
+    //   newCloneWithoutChildren
+    // )
+
+    if (!isHTMLElementEqualToElementNode(prev, data)) {
       if (prev.nodeName === newCloneWithoutChildren.nodeName) {
         appendNodeData(prev as HTMLElement, data, {
           resetListeners: true,
