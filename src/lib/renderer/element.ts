@@ -69,10 +69,8 @@ export function appendNodeData(
 }
 
 export function appendChildren(element: HTMLElement, node: ElementNodeData) {
-  for (const key in node.children) {
-    if (Object.prototype.hasOwnProperty.call(node.children, key)) {
-      appendChild(element, node.children[key])
-    }
+  for (const child of node.children) {
+    appendChild(element, child)
   }
 }
 
