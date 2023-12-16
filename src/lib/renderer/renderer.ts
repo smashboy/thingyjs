@@ -1,7 +1,7 @@
-import { ElementNode } from './elements/Element'
-import { createHTMLElement } from './renderer/element'
-import { patchTree } from './renderer/patcher'
-import { STATE_BIND_KEY, StateValue } from './state'
+import { ElementNode } from '../elements/Element'
+import { createHTMLElement } from './element'
+import { patchTree } from './patcher'
+import { STATE_BIND_KEY, StateValue } from '../state'
 
 export class Renderer {
   private element!: () => HTMLElement

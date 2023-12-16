@@ -1,7 +1,7 @@
 import * as CSS from 'csstype'
-import { Renderer } from '../renderer'
 import { IS_STATE_KEY, StateValue } from '../state'
 import { createNodeFunction } from '../utils'
+import { Renderer } from '../renderer/renderer'
 
 export type NodeReactivePropery<T> = (() => T) | T
 

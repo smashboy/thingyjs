@@ -4,7 +4,7 @@ import { Element } from './lib/elements/Element'
 import { HStack } from './lib/elements/HStack'
 import { Title } from './lib/elements/Title'
 import { VStack } from './lib/elements/VStack'
-import render from './lib/renderer'
+import render from './lib/renderer/renderer'
 import { state } from './lib/state'
 import './style.css'
 
