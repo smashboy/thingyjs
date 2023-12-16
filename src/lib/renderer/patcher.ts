@@ -9,7 +9,7 @@ export function patchTree(
   const u = unwrap(node)
 
   if (!ElementNode.is(u)) {
-    if (!node) {
+    if (!u) {
       prev.remove()
     } else {
       const newTextContent = `${node}`
