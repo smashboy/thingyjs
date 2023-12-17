@@ -1,8 +1,8 @@
 import { Page } from '../lib/Page'
-import { Title } from '../lib/elements/Title'
+import { Button } from '../lib/elements'
 
 export class AuthPage extends Page {
-  Body = Title('Auth')
+  Body = Button('Login')
 
   constructor() {
     super('/auth')

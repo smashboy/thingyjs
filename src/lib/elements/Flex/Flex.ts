@@ -1,14 +1,13 @@
 import * as CSS from 'csstype'
-import { ElementNode } from './Element'
-import { createNodeFunction } from '../utils'
+import { ElementNode } from '../Element'
+import { createNodeFunction } from '../../utils'
+import classes from './Flex.module.css'
 
 export class FlexNode extends ElementNode<'div'> {
   constructor() {
     super('div')
 
-    this.styles({
-      display: 'flex'
-    })
+    this.className(classes.root)
   }
 
   justify(prop: CSS.Property.JustifyContent) {

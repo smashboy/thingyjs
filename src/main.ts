@@ -3,6 +3,8 @@ import { NavigationController } from './lib/NavigationController'
 import { AuthPage } from './pages/Auth.page'
 import { HomePage } from './pages/Landing.page'
 
+import './style.css'
+
 class NetflixCloneApp extends App {
   readonly navigationController = new NavigationController()
 

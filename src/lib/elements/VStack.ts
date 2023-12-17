@@ -1,5 +1,5 @@
 import { createNodeFunction } from '../utils'
-import { FlexNode } from './Flex'
+import { FlexNode } from './Flex/Flex'
 
 export class VStackNode extends FlexNode {
   constructor() {

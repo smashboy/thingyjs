@@ -1,5 +1,5 @@
 import { createNodeFunction } from '../utils'
-import { FlexNode } from './Flex'
+import { FlexNode } from './Flex/Flex'
 
 export class HStackNode extends FlexNode {
   constructor() {

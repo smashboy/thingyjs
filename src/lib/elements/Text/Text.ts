@@ -1,12 +1,15 @@
 import * as CSS from 'csstype'
-import { ElementNode } from './Element'
-import { createNodeFunction } from '../utils'
+import { ElementNode } from '../Element'
+import { createNodeFunction } from '../../utils'
+import classes from './Text.module.css'
 
 export class TextNode extends ElementNode<'div'> {
   private textNode!: Text
 
   constructor(text: string) {
     super('div')
+
+    this.className(classes.root)
 
     this.child(text, (node) => (this.textNode = node as Text))
   }

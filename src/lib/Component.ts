@@ -1,4 +1,4 @@
-import { ElementNode } from './elements/Element'
+import { ElementNode } from './elements'
 
 interface TComponent {
   readonly Body: ElementNode

@@ -1,6 +1,7 @@
-import { createNodeFunction } from '../utils'
-import { ElementNode } from './Element'
-import { Text, TextNode } from './Text'
+import { ElementNode } from '../Element'
+import { createNodeFunction } from '../../utils'
+import { TextNode, Text } from '../Text/Text'
+import classes from './Button.module.css'
 
 export class ButtonNode extends ElementNode<'button'> {
   constructor(
@@ -10,6 +11,8 @@ export class ButtonNode extends ElementNode<'button'> {
     super('button')
 
     this.child(typeof label === 'string' ? Text(label) : label)
+
+    this.className(classes.root, classes.brand, classes.sm)
 
     if (onClick) {
       this.listen('click', onClick)

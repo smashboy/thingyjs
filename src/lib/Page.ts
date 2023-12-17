@@ -1,5 +1,5 @@
 import { Component } from './Component'
-import { ElementNode } from './elements/Element'
+import { ElementNode } from './elements'
 
 type PageURLSearchParams = Record<string, string>
 

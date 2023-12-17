@@ -1,6 +1,7 @@
 import * as CSS from 'csstype'
 import { createNodeFunction, getHTMLElementRef } from '../utils'
 import { Component } from '../Component'
+import clsx, { ClassValue } from 'clsx'
 
 export type Child = ElementNode | string | number | boolean
 
@@ -41,6 +42,12 @@ export class ElementNode<
         this.element.style[key] = property!
       }
     }
+
+    return this
+  }
+
+  className(...values: ClassValue[]) {
+    this.element.className = clsx(this.element.className, ...values)
 
     return this
   }
