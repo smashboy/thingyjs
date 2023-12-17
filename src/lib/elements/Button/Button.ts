@@ -15,8 +15,12 @@ export class ButtonNode extends ElementNode<'button'> {
     this.className(classes.root, classes.brand, classes.sm)
 
     if (onClick) {
-      this.listen('click', onClick)
+      this.onClick(onClick)
     }
+  }
+
+  onClick(onClick: (event: HTMLElementEventMap['click']) => void) {
+    this.listen('click', onClick)
   }
 
   submit() {
