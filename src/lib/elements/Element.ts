@@ -1,5 +1,6 @@
 import * as CSS from 'csstype'
-import { createNodeFunction } from '../utils'
+import { createNodeFunction, getHTMLElementRef } from '../utils'
+import { Component } from '../Component'
 
 export type Child = ElementNode | string | number | boolean
 
@@ -44,11 +45,14 @@ export class ElementNode<
     return this
   }
 
-  child(child: Child, onSet?: (node: Text | Element) => void) {
+  child(child: Child | Component, onSet?: (node: Text | Element) => void) {
     if (ElementNode.is(child)) {
       const el = child._getElement()
-      this.element.appendChild(child._getElement())
+      this.element.appendChild(el)
       onSet?.(el)
+    } else if (child instanceof Component) {
+      const el = child.Body._getElement()
+      this.element.appendChild(el)
     } else {
       const textNode = document.createTextNode(`${child}`)
       onSet?.(textNode)
@@ -58,15 +62,10 @@ export class ElementNode<
     return this
   }
 
-  removeChild(value: number | ChildNode) {
+  removeChild(value: ChildNode | ElementNode | Component) {
     for (let index = 0; index < this.element.childNodes.length; index++) {
       const child = this.element.childNodes[index]
-      if (typeof value === 'number' && value === index) {
-        child.remove()
-        break
-      }
-
-      if (typeof value !== 'number' && child.isSameNode(value)) {
+      if (child.isSameNode(getHTMLElementRef(value))) {
         child.remove()
         break
       }
@@ -75,10 +74,16 @@ export class ElementNode<
     return this
   }
 
-  replace(p: ChildNode, n: ChildNode) {
+  replace(
+    p: ChildNode | ElementNode | Component,
+    n: ChildNode | ElementNode | Component
+  ) {
+    p = getHTMLElementRef(p)
+    n = getHTMLElementRef(n)
+
     for (const child of this.element.childNodes) {
       if (child.isSameNode(p)) {
-        p.replaceWith(n)
+        child.replaceWith(n)
         break
       }
     }

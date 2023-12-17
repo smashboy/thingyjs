@@ -1,3 +1,4 @@
+import { Component } from './lib/Component'
 import { Box } from './lib/elements/Box'
 import { Button } from './lib/elements/Button'
 import { ElementNode } from './lib/elements/Element'
@@ -8,51 +9,53 @@ import { Text, TextNode } from './lib/elements/Text'
 import { VStack } from './lib/elements/VStack'
 import './style.css'
 
-interface Component {
-  readonly Body: ElementNode
-  onInit?: () => void
-  onDestroy?: () => void
-}
-
 interface Todo {
   description: string
 }
 
-class TodoForm implements Component {
-  readonly Body: ElementNode
-
+class TodoForm extends Component {
+  private initialValue: string
   private readonly onNewTodo: (todo: Todo) => void
-  private readonly buttonText: string
-  private readonly initialValue: string
+
+  private readonly ButtonText = Text('')
+  private readonly NewTodoInput = Input().attribute(
+    'placeholder',
+    'Your todo...'
+  )
+
+  readonly Body = Form((e) => this.onFormSubmit(e))
+    .child(this.NewTodoInput)
+    .child(Button(this.ButtonText).submit())
 
   constructor(
     onNewTodo: (todo: Todo) => void,
     buttonText = 'Create',
     initialValue = ''
   ) {
-    this.onNewTodo = onNewTodo
-    this.buttonText = buttonText
-    this.initialValue = initialValue
+    super()
 
-    this.Body = Form((e) => this.onFormSubmit(e))
-      .child(
-        Input()
-          .attribute('value', this.initialValue)
-          .attribute('placeholder', 'Your todo...')
-      )
-      .child(Button(this.buttonText).submit())
+    this.initialValue = initialValue
+    this.onNewTodo = onNewTodo
+
+    this.NewTodoInput.value(initialValue)
+    this.ButtonText.setValue(buttonText)
   }
 
-  onFormSubmit(event: SubmitEvent) {
+  private onFormSubmit(event: SubmitEvent) {
     if (!event.target[0].value) return
 
     this.onNewTodo({ description: event.target[0].value })
 
-    event.target[0].value = this.initialValue
+    this.NewTodoInput.value(this.initialValue)
+  }
+
+  setInitialValue(value: string) {
+    this.initialValue = value
+    this.NewTodoInput.value(value)
   }
 }
 
-class UserTodosScreen implements Component {
+class UserTodosScreen extends Component {
   private readonly todos: Todo[] = []
 
   private readonly TodosCounterTitle = Text(`Total todos: ${this.todos.length}`)
@@ -60,7 +63,7 @@ class UserTodosScreen implements Component {
 
   readonly Body = VStack()
     .child(this.TodosCounterTitle)
-    .child(new TodoForm((e) => this.onNewTodo(e)).Body)
+    .child(new TodoForm((e) => this.onNewTodo(e)))
     .child(this.TodosList)
 
   private onNewTodo(todo: Todo) {
@@ -68,74 +71,66 @@ class UserTodosScreen implements Component {
 
     this.TodosCounterTitle.setValue(`Total todos: ${this.todos.length}`)
     this.TodosList.child(
-      new TodoItem(
-        this.todos[this.todos.length - 1],
-        this.todos.length - 1,
-        this.TodosList
-      ).Body
+      new TodoItem(this.todos[this.todos.length - 1], this.TodosList)
     )
   }
 }
 
-class TodoItem implements Component {
+class TodoItem extends Component {
   private isInEditMode = false
 
   private readonly todo: Todo
-  private readonly listIndex: number
 
-  private readonly TodoItem: TextNode
-
-  private readonly UpdateTodoForm: TodoForm
-
+  private readonly TodoItemText: TextNode = Text('')
+  private readonly UpdateTodoForm = new TodoForm(
+    (todo) => this.updateTodo(todo),
+    'Update',
+    ''
+  )
   private readonly ParentList: ElementNode
 
-  Body: ElementNode
+  Body = VStack()
+    .child(this.TodoItemText)
+    .child(
+      HStack()
+        .gap('5px')
+        .child(Button('Edit', () => this.toggleEditMode()))
+        .child(Button('Delete', () => this.deleteTodo()))
+    )
 
-  constructor(todo: Todo, index: number, List: ElementNode) {
+  constructor(todo: Todo, List: ElementNode) {
+    super()
+
     this.todo = todo
-    this.listIndex = index
     this.ParentList = List
 
-    this.UpdateTodoForm = new TodoForm(
-      (todo) => this.updateTodo(todo),
-      'Update',
-      this.todo.description
-    )
+    this.UpdateTodoForm.setInitialValue(todo.description)
     this.UpdateTodoForm.Body.child(
       Button('Cancel', () => this.toggleEditMode())
     )
 
-    this.TodoItem = Text(`${this.todo.description}`)
-
-    this.Body = VStack()
-      .child(this.TodoItem)
-      .child(
-        HStack()
-          .gap('5px')
-          .child(Button('Edit', () => this.toggleEditMode()))
-      )
+    this.TodoItemText.setValue(this.todo.description)
   }
 
   toggleEditMode() {
     this.isInEditMode = !this.isInEditMode
 
     if (this.isInEditMode) {
-      this.Body.replace(
-        this.TodoItem._getElement(),
-        this.UpdateTodoForm.Body._getElement()
-      )
+      this.Body.replace(this.TodoItemText, this.UpdateTodoForm)
       return
     }
 
-    this.Body.replace(
-      this.UpdateTodoForm.Body._getElement(),
-      this.TodoItem._getElement()
-    )
+    this.Body.replace(this.UpdateTodoForm, this.TodoItemText)
   }
 
   updateTodo(todo: Todo) {
+    this.UpdateTodoForm.setInitialValue(todo.description)
     this.toggleEditMode()
-    this.TodoItem.setValue(todo.description)
+    this.TodoItemText.setValue(todo.description)
+  }
+
+  deleteTodo() {
+    this.ParentList.removeChild(this)
   }
 }
 

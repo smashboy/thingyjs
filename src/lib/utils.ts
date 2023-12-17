@@ -1,4 +1,5 @@
-import { ElementNode, NodeReactivePropery } from './elements/Element'
+import { Component } from './Component'
+import { ElementNode } from './elements/Element'
 
 export function isProxy(obj: any) {
   try {
@@ -40,9 +41,9 @@ export function transfer<T>(a: T[], b: T[]) {
   a.splice(0, a.length)
 }
 
-export function unwrap<T>(value: NodeReactivePropery<T>) {
-  return typeof value === 'function' ? (value as () => T)() : value
-}
+// export function unwrap<T>(value: NodeReactivePropery<T>) {
+//   return typeof value === 'function' ? (value as () => T)() : value
+// }
 
 export function createNodeFunction<
   C extends abstract new (...args: any) => any,
@@ -50,4 +51,16 @@ export function createNodeFunction<
 >(Node: ConstructorParameters<C>) {
   // @ts-ignore
   return (...args: ConstructorParameters<C>) => new Node(...args) as I
+}
+
+export function getHTMLElementRef(target: Component | ElementNode | ChildNode) {
+  if (target instanceof Component) {
+    return target.Body._getElement()
+  }
+
+  if (target instanceof ElementNode) {
+    return target._getElement()
+  }
+
+  return target
 }
