@@ -1,17 +1,16 @@
 import { Page } from '../lib/Page'
-import NetflixLogo from '../assets/netflix-logo.svg'
-import LandingThumbnail from '../assets/landing-thumbnail.jpg'
+import landingThumbnailUrl from '../assets/landing-thumbnail.jpg'
 import {
   Box,
   Button,
   HStack,
   Image,
-  SvgMask,
   Text,
   Title,
   VStack
 } from '../lib/elements'
 import classes from './landing.module.css'
+import { NetflixLogo } from '../components/NetflixLogo'
 
 export class HomePage extends Page {
   Body = VStack().child(
@@ -24,7 +23,7 @@ export class HomePage extends Page {
             zIndex: -1
           })
           .child(
-            Image(LandingThumbnail, 'background thumbnail').styles({
+            Image(landingThumbnailUrl, 'background thumbnail').styles({
               width: '100%',
               height: '100%',
               objectFit: 'cover'
@@ -33,7 +32,7 @@ export class HomePage extends Page {
           .child(
             Box().className('absoluteContainer').styles({
               backgroundImage:
-                'linear-gradient(to top, rgba(0, 0, 0, 0.8) 0, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.8) 100%)'
+                'linear-gradient(to top, rgba(0, 0, 0, 0.8) 0, rgba(0, 0, 0, 0.6) 60%, rgba(0, 0, 0, 0.8) 100%)'
             })
           )
       )
@@ -44,9 +43,7 @@ export class HomePage extends Page {
             paddingTop: '1.5rem',
             position: 'relative'
           })
-          .child(
-            SvgMask(NetflixLogo, '9.25rem', '2.5rem', 'var(--brand-color)')
-          )
+          .child(NetflixLogo())
           .child(Button('Login'))
       )
       .child(
