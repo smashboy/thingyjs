@@ -1,0 +1,94 @@
+:root {
+  --scale: 1;
+  --cursor: initial;
+
+  /* COLORS */
+
+  --white: #ffffff;
+
+  --color-blue-0:#E7F5FF;
+  --color-blue-1:#D0EBFF;
+  --color-blue-2: #A5D8FF;
+  --color-blue-3: #74C0FC;
+  --color-blue-4: #4DABF7;
+  --color-blue-5: #339AF0;
+  --color-blue-6: #228BE6;
+  --color-blue-7: #1C7ED6;
+  --color-blue-8: #1971C2;
+  --color-blue-9: #1864AB;
+
+  --color-dark-0:#C9C9C9;
+  --color-dark-1:#B8B8B8;
+  --color-dark-2: #828282;
+  --color-dark-3: #696969;
+  --color-dark-4: #424242;
+  --color-dark-5: #3B3B3B;
+  --color-dark-6: #2E2E2E;
+  --color-dark-7: #242424;
+  --color-dark-8: #1F1F1F;
+  --color-dark-9: #141414;
+
+  /* FONTS */
+  --font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
+
+  --font-size-sm: calc(0.875rem*var(--scale));
+  --font-size-md: calc(1rem*var(--scale));
+  --font-size-lg: calc(1.485rem*var(--scale));
+  
+  /* BUTTON -> COMMON */
+  --button-border-width: 0;
+  --button-border-radius: 0.25rem;
+  --button-font-weight: 500;
+
+  /* BUTTON -> PRIMARY COLORS */
+  --button-primary-filled-bg-color: var(--color-blue-4);
+  --button-primary-filled-bg-color-hover: var(--color-blue-5);
+  --button-primary-filled-bg-color-active: var(--color-blue-6);
+  --button-primary-filled-txt-color: var(--white);
+
+  --button-primary-tinted-bg-color: var(--color-blue-2);
+  --button-primary-tinted-bg-color-hover:var(--color-blue-3);
+  --button-primary-tinted-bg-color-active: var(--color-blue-4);
+  --button-primary-tinted-txt-color: var(--color-blue-6);
+
+  --button-primary-gray-txt-color: var(--color-blue-6);
+
+  --button-primary-plain-txt-color: var(--color-blue-6);
+
+  /* BUTTON -> NORMAL COLORS */
+  --button-normal-filled-bg-color: var(--color-dark-3);
+  --button-normal-filled-bg-color-hover: var(--color-dark-4);
+  --button-normal-filled-bg-color-active: var(--color-dark-5);
+  --button-normal-filled-txt-color: var(--white);
+  
+  --button-normal-tinted-bg-color: var(--color-dark-0);
+  --button-normal-tinted-bg-color-hover:var(--color-dark-1);
+  --button-normal-tinted-bg-color-active: var(--color-dark-2);
+  --button-normal-tinted-txt-color: var(--color-dark-6);
+  
+  --button-normal-gray-txt-color: var(--color-dark-6);
+  
+  --button-normal-plain-txt-color: var(--color-dark-6);
+
+  /* BUTTON -> SIZES */
+  --button-sm-font-size: var(--font-size-sm);
+  --button-sm-min-height: calc(1.875rem*var(--scale));
+  --button-sm-padding-y: calc(0.25rem*var(--scale));
+  --button-sm-padding-x: calc(1rem*var(--scale));
+
+  --button-md-font-size: var(--font-size-md);
+  --button-md-min-height: calc(2.25rem*var(--scale));
+  --button-md-padding-y: calc(0.25rem*var(--scale));
+  --button-md-padding-x: calc(1.125rem*var(--scale));
+
+  --button-lg-font-size: var(--font-size-lg);
+  --button-lg-min-height: calc(2.625rem*var(--scale));
+  --button-lg-padding-y: calc(0.35rem*var(--scale));
+  --button-lg-padding-x: calc(1.375rem*var(--scale));
+  
+}
+
+
+@media (prefers-color-scheme: dark) {
+  
+}

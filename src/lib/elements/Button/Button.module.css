@@ -2,41 +2,124 @@
   appearance: none;
   width: auto;
   display: inline-flex;
-  cursor: pointer;
+  cursor: var(--cursor);
   justify-content: center;
   align-items: center;
-  font-weight: 500;
-  border-width: var(--button-border-width, 0);
-  border-radius: var(--button-border-radius, 0.25rem);
+  font-weight: var(--button-font-weight);
+  border-width: var(--button-border-width);
+  border-radius: var(--button-border-radius);
   transition-duration: 250ms;
+  font-family: var(--font-family);
   transition-property: background-color;
   transition-timing-function: cubic-bezier(0.9, 0, 0.51, 1);
+
+  &.sm {
+    font-size: var(--button-sm-font-size);
+    min-height: var(--button-sm-min-height);
+    padding-left: var(--button-sm-padding-x);
+    padding-right: var(--button-sm-padding-x);
+    padding-top: var(--button-sm-padding-y);
+    padding-bottom: var(--button-sm-padding-y);
+  }
+
+  &.md {
+    font-size: var(--button-md-font-size);
+    min-height: var(--button-md-min-height);
+    padding-left: var(--button-md-padding-x);
+    padding-right: var(--button-md-padding-x);
+    padding-top: var(--button-md-padding-y);
+    padding-bottom: var(--button-md-padding-y);
+  }
+
+  &.lg {
+    font-size: var(--button-lg-font-size);
+    min-height: var(--button-lg-min-height);
+    padding-left: var(--button-lg-padding-x);
+    padding-right: var(--button-lg-padding-x);
+    padding-top: var(--button-lg-padding-y);
+    padding-bottom: var(--button-lg-padding-y);
+  }
+
+ &.plain {
+  background-color: transparent;
+ }
+
+  &.primary {
+    &.filled {
+      background-color: var(--button-primary-filled-bg-color);
+      color: var(--button-primary-filled-txt-color);
+    }
+
+    &.tinted {
+      background-color: var(--button-primary-tinted-bg-color);
+      color: var(--button-primary-tinted-txt-color);
+    }
+
+    &.gray {
+      color: var(--button-primary-gray-txt-color);
+    }
+
+    &.plain {
+      color: var(--button-primary-plain-txt-color);
+    }
+  }
+
+  /* &:not([aria-disabled]):hover {
+   
+  }
+
+  &:not([aria-disabled]):active {
+   
+  } */
 }
 
-.root.brand {
-  background-color: var(--button-brand-bg-color);
-  color: var(--button-brand-txt-color);
+
+
+.root.primary.filled {
+  background-color: var(--button-primary-filled-bg-color);
+  color: var(--button-primary-filled-txt-color);
+}
+.root.primary.filled:not([aria-disabled]):hover {
+  background-color: var(--button-primary-filled-bg-color-hover);
+}
+.root.primary.filled:not([aria-disabled]):active {
+  background-color: var(--button-primary-filled-bg-color-active);
+}
+.root.primary.tinted {
+  background-color: var(--button-primary-tinted-bg-color);
+  color: var(--button-primary-tinted-txt-color);
+}
+.root.primary.tinted:not([aria-disabled]):hover {
+  background-color: var(--button-primary-tinted-bg-color-hover);
+}
+.root.primary.tinted:not([aria-disabled]):active {
+  background-color: var(--button-primary-tinted-bg-color-active);
+}
+.root.primary.plain {
+  color: var(--button-primary-plain-txt-color);
 }
 
-.root.brand:hover {
-  background-color: var(--button-brand-bg-hover-color);
-  color: var(--button-brand-txt-hover-color);
+.root.normal.filled {
+  background-color: var(--button-normal-filled-bg-color);
+  color: var(--button-normal-filled-txt-color);
+}
+.root.normal.filled:not([aria-disabled]):hover {
+  background-color: var(--button-normal-filled-bg-color-hover);
+}
+.root.normal.filled:not([aria-disabled]):active {
+  background-color: var(--button-normal-filled-bg-color-active);
+}
+.root.normal.tinted {
+  background-color: var(--button-normal-tinted-bg-color);
+  color: var(--button-normal-tinted-txt-color);
+}
+.root.normal.tinted:not([aria-disabled]):hover {
+  background-color: var(--button-normal-tinted-bg-color-hover);
+}
+.root.normal.tinted:not([aria-disabled]):active {
+  background-color: var(--button-normal-tinted-bg-color-active);
+}
+.root.normal.plain {
+  color: var(--button-normal-plain-txt-color);
 }
 
-.root.brand:not([aria-disabled]):active {
-  background-color: var(--button-brand-bg-active-color);
-  color: var(--button-brand-txt-active-color);
-
-}
-
-.root.sm {
-  padding: 0.25rem 1rem;
-  min-height: 2rem;
-  font-size: 0.875rem;
-}
-
-.root.md {
-  padding: 0.75rem 1.5rem;
-  min-height: 3.5rem;
-  font-size: 1.5rem;
-}

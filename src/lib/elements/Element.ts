@@ -46,6 +46,12 @@ export class ElementNode<
     return this
   }
 
+  resetClassName() {
+    this.element.className = ''
+
+    return this
+  }
+
   className(...values: ClassValue[]) {
     this.element.className = clsx(this.element.className, ...values)
 

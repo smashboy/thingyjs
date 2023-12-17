@@ -1,9 +1,10 @@
 import { App } from './lib/App'
 import { NavigationController } from './lib/NavigationController'
+import { elementsPresentation } from './lib/elementsPresentation'
 import { AuthPage } from './pages/Auth.page'
 import { HomePage } from './pages/Landing.page'
 
-import './style.css'
+import './lib/elements/theme.css'
 
 class NetflixCloneApp extends App {
   readonly navigationController = new NavigationController()
@@ -18,4 +19,8 @@ class NetflixCloneApp extends App {
 
 const app = new NetflixCloneApp()
 
-app.render(document.getElementById('app')!)
+const root = document.getElementById('app')!
+
+// app.render(document.getElementById('app')!)
+
+root.appendChild(elementsPresentation._getElement())
