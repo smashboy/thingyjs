@@ -6,7 +6,7 @@ type TitleLevel = 1 | 2 | 3 | 4 | 5 | 6
 export class TitleNode<L extends TitleLevel> extends ElementNode<'h1'> {
   constructor(text: string, level: L = 1) {
     // @ts-ignore
-    super(`h${level}`, state)
+    super(`h${level}`)
 
     this.child(text)
   }
