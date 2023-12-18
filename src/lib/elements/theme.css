@@ -1,6 +1,5 @@
 :root {
-  --scale: 1;
-  --cursor: initial;
+  --scale: 1.1;
 
   /* COLORS */
 
@@ -17,58 +16,51 @@
   --color-blue-8: #1971C2;
   --color-blue-9: #1864AB;
 
-  --color-dark-0:#C9C9C9;
-  --color-dark-1:#B8B8B8;
-  --color-dark-2: #828282;
-  --color-dark-3: #696969;
-  --color-dark-4: #424242;
-  --color-dark-5: #3B3B3B;
-  --color-dark-6: #2E2E2E;
-  --color-dark-7: #242424;
-  --color-dark-8: #1F1F1F;
-  --color-dark-9: #141414;
-
-  /* FONTS */
-  --font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
+  --color-gray-0:#F8F9FA;
+  --color-gray-1:#F1F3F5;
+  --color-gray-2: #E9ECEF;
+  --color-gray-3: #DEE2E6;
+  --color-gray-4: #CED4DA;
+  --color-gray-5: #ADB5BD;
+  --color-gray-6: #868E96;
+  --color-gray-7: #495057;
+  --color-gray-8: #343A40;
+  --color-gray-9: #212529;
 
   --font-size-sm: calc(0.875rem*var(--scale));
   --font-size-md: calc(1rem*var(--scale));
-  --font-size-lg: calc(1.485rem*var(--scale));
+  --font-size-lg: calc(1.285rem*var(--scale));
   
   /* BUTTON -> COMMON */
   --button-border-width: 0;
-  --button-border-radius: 0.25rem;
-  --button-font-weight: 500;
+  --button-border-radius: 0.375rem;
+  --button-font-weight: 600;
 
   /* BUTTON -> PRIMARY COLORS */
-  --button-primary-filled-bg-color: var(--color-blue-4);
-  --button-primary-filled-bg-color-hover: var(--color-blue-5);
-  --button-primary-filled-bg-color-active: var(--color-blue-6);
+  --button-primary-filled-bg-color: var(--color-blue-5);
+  --button-primary-filled-bg-color-hover: var(--color-blue-6);
+  --button-primary-filled-bg-color-active: var(--color-blue-8);
   --button-primary-filled-txt-color: var(--white);
 
   --button-primary-tinted-bg-color: var(--color-blue-2);
   --button-primary-tinted-bg-color-hover:var(--color-blue-3);
-  --button-primary-tinted-bg-color-active: var(--color-blue-4);
-  --button-primary-tinted-txt-color: var(--color-blue-6);
+  --button-primary-tinted-bg-color-active: var(--color-blue-5);
+  --button-primary-tinted-txt-color: var(--color-blue-8);
 
-  --button-primary-gray-txt-color: var(--color-blue-6);
-
-  --button-primary-plain-txt-color: var(--color-blue-6);
+  --button-primary-plain-txt-color: var(--color-blue-8);
 
   /* BUTTON -> NORMAL COLORS */
-  --button-normal-filled-bg-color: var(--color-dark-3);
-  --button-normal-filled-bg-color-hover: var(--color-dark-4);
-  --button-normal-filled-bg-color-active: var(--color-dark-5);
-  --button-normal-filled-txt-color: var(--white);
+  --button-normal-filled-bg-color: var(--color-gray-3);
+  --button-normal-filled-bg-color-hover: var(--color-gray-4);
+  --button-normal-filled-bg-color-active: var(--color-gray-5);
+  --button-normal-filled-txt-color: var(--color-blue-8);
   
-  --button-normal-tinted-bg-color: var(--color-dark-0);
-  --button-normal-tinted-bg-color-hover:var(--color-dark-1);
-  --button-normal-tinted-bg-color-active: var(--color-dark-2);
-  --button-normal-tinted-txt-color: var(--color-dark-6);
+  --button-normal-tinted-bg-color: var(--color-gray-1);
+  --button-normal-tinted-bg-color-hover:var(--color-gray-2);
+  --button-normal-tinted-bg-color-active: var(--color-gray-4);
+  --button-normal-tinted-txt-color: var(--color-blue-8);
   
-  --button-normal-gray-txt-color: var(--color-dark-6);
-  
-  --button-normal-plain-txt-color: var(--color-dark-6);
+  --button-normal-plain-txt-color: var(--color-gray-8);
 
   /* BUTTON -> SIZES */
   --button-sm-font-size: var(--font-size-sm);
@@ -88,6 +80,9 @@
   
 }
 
+* {
+  font-family: "SF Pro Display", "SF Pro", BlinkMacSystemFont, Manrope, Inter, sans-serif;
+}
 
 @media (prefers-color-scheme: dark) {
   

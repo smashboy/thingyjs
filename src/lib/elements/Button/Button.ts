@@ -13,9 +13,8 @@ export const ButtonVariant = {
 export const ButtonStyle = {
   filled: 0,
   tinted: 1,
-  gray: 2,
   plain: 3
-}
+} as const
 
 export const ButtonSize = {
   sm: 0,
@@ -40,6 +39,12 @@ const ButtonVariantCssMap = {
   [ButtonVariant.destructive]: ''
 }
 
+const ButtonStyleCssMap = {
+  [ButtonStyle.plain]: classes.plain,
+  [ButtonStyle.filled]: classes.filled,
+  [ButtonStyle.tinted]: classes.tinted
+}
+
 export class ButtonNode extends ElementNode<'button'> {
   private _variant: TButtonVariant = ButtonVariant.primary
   private _size: TButtonSize = ButtonSize.md
@@ -62,34 +67,37 @@ export class ButtonNode extends ElementNode<'button'> {
   variant(variant: TButtonVariant) {
     this._variant = variant
     this.buildClassName()
+    return this
   }
 
   size(size: TButtonSize) {
     this._size = size
     this.buildClassName()
+    return this
   }
 
   style(style: TButtonStyle) {
     this._style = style
     this.buildClassName()
+    return this
   }
 
   onClick(onClick: (event: HTMLElementEventMap['click']) => void) {
     this.listen('click', onClick)
+    return this
   }
 
   submit() {
     this.attribute('type', 'submit')
-
     return this
   }
 
   private buildClassName() {
     this.resetClassName().className(
       classes.root,
-      classes.primary,
-      classes.filled,
-      classes.sm
+      ButtonVariantCssMap[this._variant],
+      ButtonStyleCssMap[this._style],
+      ButtonSizeCssMap[this._size]
     )
   }
 }

@@ -2,14 +2,12 @@
   appearance: none;
   width: auto;
   display: inline-flex;
-  cursor: var(--cursor);
   justify-content: center;
   align-items: center;
   font-weight: var(--button-font-weight);
   border-width: var(--button-border-width);
   border-radius: var(--button-border-radius);
   transition-duration: 250ms;
-  font-family: var(--font-family);
   transition-property: background-color;
   transition-timing-function: cubic-bezier(0.9, 0, 0.51, 1);
 
@@ -49,77 +47,73 @@
       background-color: var(--button-primary-filled-bg-color);
       color: var(--button-primary-filled-txt-color);
     }
-
     &.tinted {
       background-color: var(--button-primary-tinted-bg-color);
       color: var(--button-primary-tinted-txt-color);
     }
-
-    &.gray {
-      color: var(--button-primary-gray-txt-color);
-    }
-
     &.plain {
       color: var(--button-primary-plain-txt-color);
     }
   }
 
-  /* &:not([aria-disabled]):hover {
-   
+  &.normal {
+    &.filled {
+      background-color: var(--button-normal-filled-bg-color);
+      color: var(--button-normal-filled-txt-color);
+    }
+    &.tinted {
+      background-color: var(--button-normal-tinted-bg-color);
+      color: var(--button-normal-tinted-txt-color);
+    }
+    &.plain {
+      color: var(--button-normal-plain-txt-color);
+    }
+  }
+
+  &:not([aria-disabled]):hover {
+    &.primary {
+      &.filled {
+        background-color: var(--button-primary-filled-bg-color-hover);
+        
+      }
+      &.tinted {
+        background-color: var(--button-primary-tinted-bg-color-hover);
+      }
+    }
+
+    &.normal {
+      &.filled {
+        background-color: var(--button-normal-filled-bg-color-hover);
+        
+      }
+      &.tinted {
+        background-color: var(--button-normal-tinted-bg-color-hover);
+      }
+    }
   }
 
   &:not([aria-disabled]):active {
-   
-  } */
+    &.primary {
+      &.filled {
+        background-color: var(--button-primary-filled-bg-color-active);
+        
+      }
+      &.tinted {
+        background-color: var(--button-primary-tinted-bg-color-active);
+      }
+    }
+
+    &.normal {
+      &.filled {
+        background-color: var(--button-normal-filled-bg-color-active);
+        
+      }
+      &.tinted {
+        background-color: var(--button-normal-tinted-bg-color-active);
+      }
+    }
+  }
 }
 
 
-
-.root.primary.filled {
-  background-color: var(--button-primary-filled-bg-color);
-  color: var(--button-primary-filled-txt-color);
-}
-.root.primary.filled:not([aria-disabled]):hover {
-  background-color: var(--button-primary-filled-bg-color-hover);
-}
-.root.primary.filled:not([aria-disabled]):active {
-  background-color: var(--button-primary-filled-bg-color-active);
-}
-.root.primary.tinted {
-  background-color: var(--button-primary-tinted-bg-color);
-  color: var(--button-primary-tinted-txt-color);
-}
-.root.primary.tinted:not([aria-disabled]):hover {
-  background-color: var(--button-primary-tinted-bg-color-hover);
-}
-.root.primary.tinted:not([aria-disabled]):active {
-  background-color: var(--button-primary-tinted-bg-color-active);
-}
-.root.primary.plain {
-  color: var(--button-primary-plain-txt-color);
-}
-
-.root.normal.filled {
-  background-color: var(--button-normal-filled-bg-color);
-  color: var(--button-normal-filled-txt-color);
-}
-.root.normal.filled:not([aria-disabled]):hover {
-  background-color: var(--button-normal-filled-bg-color-hover);
-}
-.root.normal.filled:not([aria-disabled]):active {
-  background-color: var(--button-normal-filled-bg-color-active);
-}
-.root.normal.tinted {
-  background-color: var(--button-normal-tinted-bg-color);
-  color: var(--button-normal-tinted-txt-color);
-}
-.root.normal.tinted:not([aria-disabled]):hover {
-  background-color: var(--button-normal-tinted-bg-color-hover);
-}
-.root.normal.tinted:not([aria-disabled]):active {
-  background-color: var(--button-normal-tinted-bg-color-active);
-}
-.root.normal.plain {
-  color: var(--button-normal-plain-txt-color);
-}
 
